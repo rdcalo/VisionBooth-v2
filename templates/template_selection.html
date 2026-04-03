@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Template - VisionBooth</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background-color: #f1f1f1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #101b40;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 35px 90px;
+            background-color: #f1f1f1;
+        }
+
+        .logo {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #101b40;
+            line-height: 1.2;
+        }
+
+        .logo span {
+            display: block;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 60px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-title {
+            font-size: 2.5em;
+            font-weight: 800;
+            color: #101b40;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #666;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            width: 100%;
+            margin-bottom: 60px;
+        }
+
+        .template-card {
+            background: white;
+            border: 3px solid #ccc;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .template-card:hover {
+            border-color: #101b40;
+            box-shadow: 0 8px 25px rgba(16, 27, 64, 0.2);
+            transform: translateY(-8px);
+        }
+
+        .template-card.selected {
+            border-color: #101b40;
+            border-width: 4px;
+            box-shadow: 0 8px 30px rgba(16, 27, 64, 0.3);
+        }
+
+        .template-preview {
+            width: 100%;
+            height: 240px;
+            background: #f9f9f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .template-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .template-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .template-name {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #101b40;
+            margin-bottom: 8px;
+        }
+
+        .template-desc {
+            font-size: 0.95em;
+            color: #666;
+        }
+
+        .selection-section {
+            background: #f0f4ff;
+            padding: 40px;
+            border-radius: 16px;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        .selection-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #101b40;
+            margin-bottom: 20px;
+        }
+
+        .instruction {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .detected-text {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #101b40;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-message {
+            font-size: 1em;
+            color: #777;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 1.8em;
+            }
+
+            .templates-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .template-preview {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <span>VISION</span>
+            <span>BOOTH</span>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <h1 class="page-title">Choose Your Design</h1>
+        <div class="subtitle">Pick one of our beautiful photo strip templates</div>
+
+        <div class="templates-grid">
+            <div class="template-card" id="template1" onclick="selectTemplate(1)">
+                <div class="template-preview">
+                    <img src="/static/templates/template_1.png" alt="Classic Blue">
+                </div>
+                <div class="template-info">
+                    <div class="template-name">Classic</div>
+                    <div class="template-desc">Professional Blue Design</div>
+                </div>
+            </div>
+
+            <div class="template-card" id="template2" onclick="selectTemplate(2)">
+                <div class="template-preview">
+                    <img src="/static/templates/template_2.png" alt="Fun Rainbow">
+                </div>
+                <div class="template-info">
+                    <div class="template-name">Fun</div>
+                    <div class="template-desc">Colorful Rainbow Design</div>
+                </div>
+            </div>
+
+            <div class="template-card" id="template3" onclick="selectTemplate(3)">
+                <div class="template-preview">
+                    <img src="/static/templates/template_3.png" alt="Elegant Purple">
+                </div>
+                <div class="template-info">
+                    <div class="template-name">Elegant</div>
+                    <div class="template-desc">Sophisticated Purple Design</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="selection-section">
+            <div class="selection-title">Select a template</div>
+            <div class="instruction">Say "TEMPLATE 1", "TEMPLATE 2", or "TEMPLATE 3"</div>
+            
+            <div class="detected-text" id="detectedText">
+                Waiting for voice input...
+            </div>
+
+            <div class="status-message" id="statusMessage"></div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+        let selectedTemplate = null;
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+            startListening();
+        });
+
+        socket.on('voice_detected_template', (data) => {
+            const detected = data.detected_text || 'Not recognized';
+            document.getElementById('detectedText').textContent = `You said: "${detected}"`;
+            
+            if (data.is_valid && data.matched_command) {
+                const templateNum = parseInt(data.matched_command.replace('TEMPLATE ', ''));
+                selectTemplate(templateNum);
+            } else {
+                document.getElementById('statusMessage').textContent = 'Not recognized. Please say TEMPLATE 1, 2, or 3.';
+                setTimeout(() => startListening(), 2000);
+            }
+        });
+
+        socket.on('template_selected', (data) => {
+            console.log('Template confirmed:', data.template);
+            document.getElementById('statusMessage').textContent = 'Proceeding to filter selection...';
+            setTimeout(() => {
+                window.location.href = '/filter_selection';
+            }, 1500);
+        });
+
+        function selectTemplate(num) {
+            selectedTemplate = num;
+            
+            // Update UI
+            document.querySelectorAll('.template-card').forEach((card, idx) => {
+                card.classList.remove('selected');
+                if (idx + 1 === num) {
+                    card.classList.add('selected');
+                }
+            });
+
+            document.getElementById('statusMessage').textContent = `Template ${num} selected!`;
+            
+            // Notify server
+            socket.emit('select_template', { template: num });
+        }
+
+        function startListening() {
+            socket.emit('start_listening_template', {
+                expected_commands: ['TEMPLATE 1', 'TEMPLATE 2', 'TEMPLATE 3']
+            });
+        }
+    </script>
+</body>
+</html>

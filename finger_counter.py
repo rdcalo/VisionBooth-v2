@@ -6,7 +6,6 @@ mp_hands = mp.solutions.hands
 def count_fingers(hand_landmarks, handedness):
     fingers = []
 
-    # Thumb logic (different orientation for left/right hand)
     if handedness.classification[0].label == "Right":
         fingers.append(hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].x <
                        hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_IP].x)
@@ -14,7 +13,7 @@ def count_fingers(hand_landmarks, handedness):
         fingers.append(hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP].x >
                        hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_IP].x)
 
-    # Other 4 fingers
+
     fingers.append(hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y <
                    hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_PIP].y)
     fingers.append(hand_landmarks.landmark[mp_hands.HandLandmark.MIDDLE_FINGER_TIP].y <

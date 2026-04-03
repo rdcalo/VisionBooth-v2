@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Filter - VisionBooth</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background-color: #f1f1f1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            color: #101b40;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 35px 90px;
+            background-color: #f1f1f1;
+        }
+
+        .logo {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #101b40;
+            line-height: 1.2;
+        }
+
+        .logo span {
+            display: block;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 60px 40px;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .page-title {
+            font-size: 2.5em;
+            font-weight: 800;
+            color: #101b40;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #666;
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .filters-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            width: 100%;
+            margin-bottom: 60px;
+        }
+
+        .filter-card {
+            background: white;
+            border: 3px solid #ccc;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-card:hover {
+            border-color: #101b40;
+            box-shadow: 0 8px 25px rgba(16, 27, 64, 0.2);
+            transform: translateY(-8px);
+        }
+
+        .filter-card.selected {
+            border-color: #101b40;
+            border-width: 4px;
+            box-shadow: 0 8px 30px rgba(16, 27, 64, 0.3);
+        }
+
+        .filter-preview {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+
+        .filter-preview.bw {
+            background: linear-gradient(135deg, #333, #999);
+        }
+
+        .filter-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .filter-name {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #101b40;
+            margin-bottom: 8px;
+        }
+
+        .filter-desc {
+            font-size: 0.95em;
+            color: #666;
+        }
+
+        .selection-section {
+            background: #f0f4ff;
+            padding: 40px;
+            border-radius: 16px;
+            max-width: 700px;
+            text-align: center;
+        }
+
+        .selection-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #101b40;
+            margin-bottom: 20px;
+        }
+
+        .instruction {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .detected-text {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #101b40;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-message {
+            font-size: 1em;
+            color: #777;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .page-title {
+                font-size: 1.8em;
+            }
+
+            .filters-container {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .filter-preview {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">
+            <span>VISION</span>
+            <span>BOOTH</span>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <h1 class="page-title">Apply a Filter</h1>
+        <div class="subtitle">Choose how you want your photos to look</div>
+
+        <div class="filters-container">
+            <div class="filter-card" id="filterNormal" onclick="selectFilter('normal')">
+                <div class="filter-preview">
+                    Color
+                </div>
+                <div class="filter-info">
+                    <div class="filter-name">Normal</div>
+                    <div class="filter-desc">Keep original colors</div>
+                </div>
+            </div>
+
+            <div class="filter-card" id="filterBW" onclick="selectFilter('bw')">
+                <div class="filter-preview bw">
+                    Black & White
+                </div>
+                <div class="filter-info">
+                    <div class="filter-name">Black & White</div>
+                    <div class="filter-desc">Classic timeless look</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="selection-section">
+            <div class="selection-title">Select a filter</div>
+            <div class="instruction">Say "ONE" for Normal or "TWO" for Black & White</div>
+            
+            <div class="detected-text" id="detectedText">
+                Waiting for voice input...
+            </div>
+
+            <div class="status-message" id="statusMessage"></div>
+        </div>
+    </div>
+
+    <script>
+        const socket = io();
+        let selectedFilter = null;
+
+        socket.on('connect', () => {
+            console.log('Connected to server');
+            startListening();
+        });
+
+        socket.on('voice_detected_filter', (data) => {
+            const detected = data.detected_text || 'Not recognized';
+            document.getElementById('detectedText').textContent = `You said: "${detected}"`;
+            
+            if (data.is_valid && data.matched_command) {
+                const filterMap = {
+                    'ONE': 'normal',
+                    'TWO': 'bw'
+                };
+                const filter = filterMap[data.matched_command];
+                if (filter) {
+                    selectFilter(filter);
+                }
+            } else {
+                document.getElementById('statusMessage').textContent = 'Not recognized. Please say ONE or TWO.';
+                setTimeout(() => startListening(), 2000);
+            }
+        });
+
+        socket.on('filter_selected', (data) => {
+            console.log('Filter confirmed:', data.filter);
+            document.getElementById('statusMessage').textContent = 'Generating your photo strip...';
+            setTimeout(() => {
+                window.location.href = '/final_preview';
+            }, 1500);
+        });
+
+        function selectFilter(filter) {
+            selectedFilter = filter;
+            
+            // Update UI
+            document.getElementById('filterNormal').classList.remove('selected');
+            document.getElementById('filterBW').classList.remove('selected');
+            
+            if (filter === 'normal') {
+                document.getElementById('filterNormal').classList.add('selected');
+                document.getElementById('statusMessage').textContent = 'Normal filter selected!';
+            } else if (filter === 'bw') {
+                document.getElementById('filterBW').classList.add('selected');
+                document.getElementById('statusMessage').textContent = 'Black & White filter selected!';
+            }
+            
+            // Notify server
+            socket.emit('select_filter', { filter: filter });
+        }
+
+        function startListening() {
+            socket.emit('start_listening_filter', {
+                expected_commands: ['ONE', 'TWO']
+            });
+        }
+    </script>
+</body>
+</html>

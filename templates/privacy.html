@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guide - VisionBooth</title>
+    <title>Privacy Notice - VisionBooth</title>
     <style>
-        /* Reset and global styles */
         * {
             margin: 0;
             padding: 0;
@@ -22,7 +21,6 @@
             overflow-x: hidden;
         }
 
-        /* Navigation */
         nav {
             display: flex;
             justify-content: space-between;
@@ -82,7 +80,6 @@
             background-color: #f1f1f1;
         }
 
-        /* Main Content */
         .main-content {
             flex: 1;
             display: flex;
@@ -92,12 +89,6 @@
             padding: 60px 100px;
             max-width: 1000px;
             margin: 0 auto;
-            animation: fadeIn 1.2s ease-out forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
         }
 
         .page-title {
@@ -105,80 +96,98 @@
             font-weight: 800;
             color: #101b40;
             text-align: center;
-            margin-bottom: 60px;
+            margin-bottom: 40px;
         }
 
-        .steps-container {
+        .privacy-container {
             display: flex;
             flex-direction: column;
-            gap: 40px;
+            gap: 25px;
             width: 100%;
         }
 
-        .step {
+        .privacy-section {
             font-size: 1em;
         }
 
-        .step-header {
+        .section-title {
             font-size: 1.1em;
             font-weight: 700;
             color: #101b40;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
-        .step-content ul {
-            list-style: none;
-            padding-left: 20px;
-        }
-
-        .step-content li {
-            position: relative;
+        .section-content {
             font-size: 1.05em;
             line-height: 1.6;
             color: #000;
         }
 
-        .step-content li::before {
-            content: "•";
-            position: absolute;
-            left: -15px;
-            font-size: 1.3em;
-            color: #101b40;
-        }
-
         .highlight {
             font-weight: 700;
+            color: #101b40;
         }
 
-        /* GOT IT Button */
-        .gotit-btn {
-            margin-top: 60px;
-            padding: 15px 55px;
-            font-size: 1.15em;
-            font-weight: 700;
+        .cta-section {
+            margin-top: 40px;
+            padding: 25px;
+            background-color: #f0f4ff;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .cta-text {
+            font-size: 1.05em;
             color: #101b40;
-            background-color: #f1f1f1;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .agree-btn {
+            padding: 12px 45px;
+            font-size: 1em;
+            font-weight: 700;
+            color: white;
+            background-color: #101b40;
             border: 2.5px solid #101b40;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(16, 27, 64, 0.12);
             text-decoration: none;
             display: inline-block;
         }
 
-        .gotit-btn:hover {
-            background-color: #101b40;
-            color: white;
+        .agree-btn:hover {
+            background-color: white;
+            color: #101b40;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 27, 64, 0.25);
         }
 
-        .gotit-btn:active {
-            transform: translateY(0);
+        .decline-btn {
+            padding: 12px 45px;
+            font-size: 1em;
+            font-weight: 700;
+            color: #101b40;
+            background-color: white;
+            border: 2.5px solid #101b40;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
         }
 
-        /* Responsive Design */
+        .decline-btn:hover {
+            background-color: #f1f1f1;
+            color: #101b40;
+        }
+
         @media (max-width: 1024px) {
             nav {
                 padding: 30px 50px;
@@ -190,16 +199,6 @@
 
             .page-title {
                 font-size: 2em;
-                margin-bottom: 40px;
-            }
-
-            .step-header {
-                font-size: 1em;
-            }
-
-            .gotit-btn {
-                font-size: 1em;
-                padding: 12px 40px;
             }
         }
 
@@ -213,21 +212,19 @@
 
             .main-content {
                 padding: 40px 30px;
-                text-align: center;
             }
 
-            .steps-container {
-                text-align: left;
+            .button-group {
+                flex-direction: column;
             }
 
-            .page-title {
-                font-size: 1.8em;
+            .agree-btn, .decline-btn {
+                width: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
     <nav>
         <div class="logo">
             <span>VISION</span>
@@ -235,82 +232,59 @@
         </div>
         <div class="nav-menu">
             <a href="/" class="nav-btn">HOME</a>
-            <a href="/guide" class="nav-btn active">GUIDE</a>
+            <a href="/guide" class="nav-btn">GUIDE</a>
             <a href="/index" class="nav-btn">PHOTOBOOTH</a>
             <a href="/about" class="nav-btn">ABOUT</a>
         </div>
     </nav>
 
-    <!-- Main Content -->
     <div class="main-content">
-        <h1 class="page-title">How does it work?</h1>
+        <h1 class="page-title">Privacy & Data Notice</h1>
 
-        <div class="steps-container">
-            <div class="step">
-                <h2 class="step-header">Step 1: Set Your Timer!</h2>
-                <div class="step-content">
-                    <ul>
-                        <li>Hold up 1–5 fingers to choose countdown length</li>
-                    </ul>
+        <div class="privacy-container">
+            <div class="privacy-section">
+                <h2 class="section-title">Camera Access</h2>
+                <div class="section-content">
+                    VisionBooth requires access to your device's camera to capture photos. Your camera feed is processed locally on your device and is <span class="highlight">never stored or transmitted</span> to external servers unless you explicitly download your photos.
                 </div>
             </div>
 
-            <div class="step">
-                <h2 class="step-header">Step 2: Start the Countdown!</h2>
-                <div class="step-content">
-                    <ul>
-                        <li>Say <span class="highlight">"START"</span> to begin the countdown <span class="highlight">(Say "CLOSED FIST" gesture to reset)</span></li>
-                    </ul>
+            <div class="privacy-section">
+                <h2 class="section-title">Microphone Access</h2>
+                <div class="section-content">
+                    VisionBooth uses your microphone to recognize voice commands ("START", "YES", "NO", etc.). Audio is processed locally and <span class="highlight">not recorded or stored</span> after command recognition is complete.
                 </div>
             </div>
 
-            <div class="step">
-                <h2 class="step-header">Step 3: Strike Your Poses!</h2>
-                <div class="step-content">
-                    <ul>
-                        <li>Get ready for 4 photos — the countdown repeats automatically</li>
-                    </ul>
+            <div class="privacy-section">
+                <h2 class="section-title">Photo Storage</h2>
+                <div class="section-content">
+                    Your photo strips are stored locally on this device in the <span class="highlight">sessions</span> folder. You have full control over your photos and can delete them at any time. We do not upload, analyze, or share your images without your explicit consent.
                 </div>
             </div>
 
-            <div class="step">
-                <h2 class="step-header">Step 4: Review Your Photos!</h2>
-                <div class="step-content">
-                    <ul>
-                        <li>Say <span class="highlight">"YES"</span> to retake or <span class="highlight">"NO"</span> to continue</li>
-                    </ul>
+            <div class="privacy-section">
+                <h2 class="section-title">Gesture Recognition</h2>
+                <div class="section-content">
+                    Hand gestures are detected using local computer vision technology. Gesture data is <span class="highlight">processed in real-time on your device</span> and not stored or transmitted.
                 </div>
             </div>
 
-            <div class="step">
-                <h2 class="step-header">Step 5: Choose Your Design!</h2>
-                <div class="step-content">
-                    <ul>
-                        <li>Say <span class="highlight">"TEMPLATE 1", "TEMPLATE 2", or "TEMPLATE 3"</span> to pick your photo strip design</li>
-                    </ul>
+            <div class="privacy-section">
+                <h2 class="section-title">Contactless & Hygienic</h2>
+                <div class="section-content">
+                    VisionBooth is designed as a <span class="highlight">completely contactless experience</span>. You control the entire photo booth using only gestures and voice commands—no buttons to touch, no screens to interact with manually.
                 </div>
             </div>
 
-            <div class="step">
-                <h2 class="step-header">Step 6: Apply a Filter!</h2>
-                <div class="step-content">
-                    <ul>
-                        <li>Say <span class="highlight">"ONE"</span> for Normal colors or <span class="highlight">"TWO"</span> for Black & White</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="step">
-                <h2 class="step-header">Step 7: Download Your Strip!</h2>
-                <div class="step-content">
-                    <ul>
-                        <li>Click download to save your photo strip to your device</li>
-                    </ul>
+            <div class="cta-section">
+                <div class="cta-text">By proceeding, you acknowledge that you have read and understood this privacy notice and agree to the use of camera and microphone.</div>
+                <div class="button-group">
+                    <button class="agree-btn" onclick="window.location.href='/index'">I Agree, Continue</button>
+                    <button class="decline-btn" onclick="window.location.href='/'">Decline, Go Back</button>
                 </div>
             </div>
         </div>
-
-        <a href="/privacy" class="gotit-btn">GOT IT!</a>
     </div>
 </body>
 </html>

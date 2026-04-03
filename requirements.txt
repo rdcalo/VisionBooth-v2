@@ -6,3 +6,6 @@ flask==3.0.0
 flask-socketio==5.3.5
 python-socketio==5.10.0
 simple-websocket==1.0.0
+SpeechRecognition==3.10.0
+pyttsx3==2.90
+Pillow>=9.0.0

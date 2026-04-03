@@ -7,12 +7,12 @@ mp_hands = mp.solutions.hands
 def is_thumb_up(hand_landmarks):
     thumb_tip = hand_landmarks.landmark[4]
     thumb_mcp = hand_landmarks.landmark[2]
-    return thumb_tip.y < thumb_mcp.y - 0.05  # Adjust threshold as needed
+    return thumb_tip.y < thumb_mcp.y - 0.05  
 
 def is_thumb_down(hand_landmarks):
     thumb_tip = hand_landmarks.landmark[4]
     thumb_mcp = hand_landmarks.landmark[2]
-    return thumb_tip.y > thumb_mcp.y + 0.05  # Detect when thumb points downward
+    return thumb_tip.y > thumb_mcp.y + 0.05  
 
 def calculate_distance_xyz(point1, point2):
     return math.sqrt((point1.x - point2.x) ** 2 +

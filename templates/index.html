@@ -203,97 +203,6 @@
             transition: width 0.3s ease;
         }
 
-        /* Photo Strip Preview - COMPLETELY REDESIGNED */
-        .strip-preview {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background-color: #f1f1f1;
-            z-index: 999;
-        }
-
-        .strip-preview.show {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 80px;
-            padding: 40px;
-        }
-
-        .strip-container {
-            flex-shrink: 0;
-        }
-
-        .strip-preview img {
-            display: block;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            max-height: 85vh;
-            width: auto;
-            height: auto;
-        }
-
-        .completion-content {
-            flex-shrink: 0;
-            text-align: left;
-            max-width: 600px;
-        }
-
-        .thank-you-text {
-            font-size: 1.5em;
-            font-weight: 400;
-            color: #101b40;
-            margin-bottom: 8px;
-            letter-spacing: 0.3px;
-        }
-
-        .visionbooth-title {
-            font-size: 5em;
-            font-weight: 800;
-            color: #101b40;
-            margin-bottom: 25px;
-            line-height: 1;
-            letter-spacing: -1px;
-        }
-
-        .ready-text {
-            font-size: 1.5em;
-            font-weight: 400;
-            color: #101b40;
-            margin-bottom: 40px;
-            letter-spacing: 0.3px;
-        }
-
-        .button-group {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-            align-items: flex-start;
-        }
-
-        .download-btn {
-            padding: 18px 60px;
-            font-size: 1.15em;
-            font-weight: 600;
-            border-radius: 50px;
-            background-color: transparent;
-            color: #101b40;
-            border: 2.5px solid #101b40;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            min-width: 240px;
-        }
-
-        .download-btn:hover {
-            background-color: #101b40;
-            color: white;
-            transform: translateX(8px);
-        }
-
         .performance-info {
             font-size: 0.9em;
             color: #777;
@@ -304,34 +213,17 @@
             display: none !important;
         }
 
-        /* Responsive */
         @media (max-width: 1024px) {
-            .strip-preview.show {
-                flex-direction: column;
-                gap: 40px;
-                justify-content: center;
+            nav {
+                padding: 30px 50px;
             }
 
-            .strip-preview img {
-                width: 240px;
+            .main-content {
+                padding: 40px 30px;
             }
 
-            .completion-content {
-                text-align: center;
-            }
-
-            .visionbooth-title {
-                font-size: 3.5em;
-            }
-
-            .button-group {
-                align-items: center;
-                width: 100%;
-            }
-
-            .download-btn {
-                width: 100%;
-                max-width: 320px;
+            .status-title {
+                font-size: 1.8em;
             }
         }
 
@@ -361,22 +253,6 @@
             .countdown-display {
                 font-size: 3.5em;
                 min-height: 60px;
-            }
-
-            .strip-preview img {
-                width: 200px;
-            }
-
-            .thank-you-text {
-                font-size: 1.2em;
-            }
-
-            .visionbooth-title {
-                font-size: 2.5em;
-            }
-
-            .ready-text {
-                font-size: 1.2em;
             }
         }
     </style>
@@ -408,8 +284,8 @@
         <div class="countdown-display" id="countdownDisplay"></div>
 
         <div class="info-section">
-            <p class="info-text" id="infoText">Do a thumbs up when you're ready!</p>
-            <button class="action-btn hidden" id="resetBtn" onclick="resetSession()">Make a fist to change timer</button>
+            <p class="info-text" id="infoText">Show 1-5 fingers to set your timer</p>
+            <button class="action-btn hidden" id="resetBtn" onclick="resetSession()">Say "FIST" to change timer</button>
         </div>
 
         <div class="progress-bar-container hidden" id="progressContainer">
@@ -421,22 +297,6 @@
         <p class="gesture-display" id="gestureDisplay">Gesture detected: None</p>
 
         <p class="performance-info" id="performanceInfo">FPS: --</p>
-    </div>
-
-    <!-- Photo Strip Preview - REDESIGNED -->
-    <div class="strip-preview" id="stripPreview">
-        <div class="strip-container">
-            <img id="stripImage" src="" alt="Photo strip">
-        </div>
-        <div class="completion-content">
-            <p class="thank-you-text">Thank you for trying out</p>
-            <h2 class="visionbooth-title">VisionBooth</h2>
-            <p class="ready-text">Your photo strip is ready to download!</p>
-            <div class="button-group">
-                <button class="download-btn" onclick="downloadStrip()">DOWNLOAD</button>
-                <button class="download-btn" onclick="startNewStrip()">RETAKE</button>
-            </div>
-        </div>
     </div>
 
     <canvas id="canvas" style="display: none;"></canvas>
@@ -455,16 +315,13 @@
         const progressFill = document.getElementById('progressFill');
         const gestureDisplay = document.getElementById('gestureDisplay');
         const performanceInfo = document.getElementById('performanceInfo');
-        const stripPreview = document.getElementById('stripPreview');
-        const stripImage = document.getElementById('stripImage');
 
         let canSend = true;
         let frameCount = 0;
         let lastFpsUpdate = Date.now();
-        let currentState = 'PROMPT_TIMER';
+        let currentState = 'TIMER_DETECT';
         let processingTimeout = null;
         let lastFrameTime = 0;
-        let currentStripFilename = null;
         let lastCaptureTriggered = false;
 
         const SCALE_FACTOR = 0.35;
@@ -486,8 +343,8 @@
                 canvas.width = video.videoWidth * SCALE_FACTOR;
                 canvas.height = video.videoHeight * SCALE_FACTOR;
                 
-                console.log(`📹 Video Resolution: ${video.videoWidth}x${video.videoHeight}`);
-                console.log(`🔍 Detection Resolution: ${canvas.width}x${canvas.height}`);
+                console.log(`Video Resolution: ${video.videoWidth}x${video.videoHeight}`);
+                console.log(`Detection Resolution: ${canvas.width}x${canvas.height}`);
                 
                 startSending();
             };
@@ -514,7 +371,7 @@
                     }
                     
                     processingTimeout = setTimeout(() => {
-                        console.warn('⚠️ Backend timeout, forcing reset');
+                        console.warn('Backend timeout, forcing reset');
                         canSend = true;
                     }, RESPONSE_TIMEOUT);
                     
@@ -551,12 +408,12 @@
             const stateChanged = (currentState !== data.state);
             currentState = data.state;
             
-            if (stateChanged && currentState !== 'CAPTURE_DONE') {
+            if (stateChanged && currentState !== 'CAPTURE') {
                 lastCaptureTriggered = false;
             }
             
             if (data.trigger_capture === true && !lastCaptureTriggered) {
-                console.log('📸 Capture triggered by state update');
+                console.log('Capture triggered by state update');
                 lastCaptureTriggered = true;
                 setTimeout(() => capturePhoto(), 100);
             }
@@ -587,14 +444,14 @@
             resetBtn.classList.add('hidden');
             
             switch(state) {
-                case 'PROMPT_TIMER':
+                case 'TIMER_DETECT':
                     statusTitle.textContent = 'Set your timer using your fingers';
-                    infoText.textContent = 'Do a thumbs up when you\'re ready!';
+                    infoText.textContent = 'Show 1-5 fingers to set your timer';
                     break;
                     
-                case 'DETECTING_FINGERS':
+                case 'TIMER_DETECTING':
                     statusTitle.textContent = 'Hold steady...';
-                    infoText.textContent = 'Do a thumbs up when you\'re ready!';
+                    infoText.textContent = 'Keep showing the same number of fingers';
                     if (streak_progress) {
                         progressContainer.classList.remove('hidden');
                         const percent = (streak_progress.current / streak_progress.required) * 100;
@@ -603,15 +460,10 @@
                     break;
                     
                 case 'TIMER_SET':
-                case 'AWAIT_THUMBS_UP':
+                case 'TIMER_READY':
                     statusTitle.textContent = `Timer set to ${timer_value} seconds`;
-                    infoText.textContent = 'Do a thumbs up when you\'re ready!';
+                    infoText.textContent = 'Say "START" to begin countdown';
                     resetBtn.classList.remove('hidden');
-                    if (streak_progress) {
-                        progressContainer.classList.remove('hidden');
-                        const percent = (streak_progress.current / streak_progress.required) * 100;
-                        progressFill.style.width = percent + '%';
-                    }
                     break;
                     
                 case 'COUNTDOWN':
@@ -619,30 +471,33 @@
                         if (countdownValue > 0) {
                             statusTitle.textContent = '';
                             countdownDisplay.textContent = countdownValue;
-                            infoText.textContent = 'Pose and hold still! Taking your photos!';
+                            infoText.textContent = 'Pose and hold still!';
                         } else {
                             statusTitle.textContent = '';
-                            countdownDisplay.textContent = '📸';
+                            countdownDisplay.textContent = '.';
                             infoText.textContent = 'Smile!';
                         }
                     }
                     resetBtn.classList.remove('hidden');
                     break;
                     
-                case 'CAPTURE_DONE':
+                case 'CAPTURE':
                     if (capture_count < total_captures) {
                         statusTitle.textContent = `Photo ${capture_count}/${total_captures} captured!`;
                         infoText.textContent = 'Get ready for next photo...';
                     } else {
-                        statusTitle.textContent = 'Creating your photo strip...';
-                        infoText.textContent = 'Almost done!';
+                        statusTitle.textContent = 'All photos captured!';
+                        infoText.textContent = 'Redirecting to review...';
+                        setTimeout(() => {
+                            window.location.href = '/retake';
+                        }, 2000);
                     }
                     break;
             }
         }
 
         function capturePhoto() {
-            console.log('📸 Capture photo function called');
+            console.log('Capture photo function called');
             
             try {
                 const captureCanvas = document.createElement('canvas');
@@ -653,55 +508,13 @@
                 captureCtx.drawImage(video, 0, 0, captureCanvas.width, captureCanvas.height);
                 const imageData = captureCanvas.toDataURL('image/png');
                 
-                console.log(`✅ Image captured at ${captureCanvas.width}x${captureCanvas.height}`);
+                console.log(`Image captured at ${captureCanvas.width}x${captureCanvas.height}`);
                 
                 socket.emit('save_photo', { image: imageData });
-                console.log('📤 Sent photo to server for saving');
+                console.log('Sent photo to server for saving');
             } catch (error) {
-                console.error('❌ Error capturing photo:', error);
+                console.error('Error capturing photo:', error);
             }
-        }
-
-        socket.on('strip_ready', (data) => {
-            console.log('🎉 Strip ready:', data.filename);
-            currentStripFilename = data.filename;
-            
-            // Preload image to get natural dimensions
-            const img = new Image();
-            img.onload = function() {
-                console.log(`📐 Photo strip dimensions: ${img.naturalWidth}x${img.naturalHeight}`);
-                stripImage.src = `/${data.filename}`;
-                stripPreview.classList.add('show');
-            };
-            img.src = `/${data.filename}`;
-        });
-
-        socket.on('photo_received', (data) => {
-            console.log(`✅ Photo ${data.count}/${data.total} acknowledged by server`);
-        });
-
-        socket.on('photo_error', (data) => {
-            console.error('❌ Photo error:', data.error);
-            statusTitle.textContent = `Error: ${data.error}`;
-            infoText.textContent = 'Please try again';
-        });
-
-        function downloadStrip() {
-            if (currentStripFilename) {
-                const link = document.createElement('a');
-                link.href = `/${currentStripFilename}`;
-                link.download = currentStripFilename.split('/').pop();
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                console.log('📥 Downloading strip');
-            }
-        }
-
-        function startNewStrip() {
-            stripPreview.classList.remove('show');
-            console.log('🔄 Starting new strip');
-            location.reload();
         }
 
         function resetSession() {
@@ -709,19 +522,19 @@
         }
 
         socket.on('connected', (data) => {
-            console.log('✅ Connected to server. Session:', data.session);
+            console.log('Connected to server. Session:', data.session);
         });
 
         socket.on('disconnect', () => {
-            console.warn('⚠️ Disconnected from server');
+            console.warn('Disconnected from server');
         });
 
         socket.on('connect_error', (error) => {
-            console.error('❌ Connection error:', error);
+            console.error('Connection error:', error);
         });
 
         socket.on('error', (error) => {
-            console.error('❌ Socket error:', error);
+            console.error('Socket error:', error);
         });
     </script>
 </body>
