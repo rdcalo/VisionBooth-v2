@@ -3,295 +3,452 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Choose Filter - VisionBooth</title>
+    <title>Apply a Filter - VisionBooth</title>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background-color: #f1f1f1;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             color: #101b40;
         }
-
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 35px 90px;
             background-color: #f1f1f1;
+            position: relative;
+            width: 100%;
         }
-
-        .logo {
-            font-size: 1.2em;
-            font-weight: 700;
-            color: #101b40;
-            line-height: 1.2;
-        }
-
-        .logo span {
-            display: block;
-        }
-
-        .main-content {
-            flex: 1;
+        .logo { font-size: 1.2em; font-weight: 700; color: #101b40; line-height: 1.2; }
+        .logo span { display: block; }
+        .nav-menu {
+            background-color: #f1f1f1;
+            border: 2.5px solid #101b40;
+            border-radius: 50px;
+            padding: 6px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 60px 40px;
-            max-width: 1000px;
-            margin: 0 auto;
-            width: 100%;
+            gap: 5px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 3px 12px rgba(16,27,64,0.12);
         }
-
-        .page-title {
-            font-size: 2.5em;
-            font-weight: 800;
-            color: #101b40;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .subtitle {
-            font-size: 1.2em;
-            color: #666;
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .filters-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 40px;
-            width: 100%;
-            margin-bottom: 60px;
-        }
-
-        .filter-card {
-            background: white;
-            border: 3px solid #ccc;
-            border-radius: 12px;
-            overflow: hidden;
+        .nav-btn {
+            padding: 10px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 0.95em;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .filter-card:hover {
-            border-color: #101b40;
-            box-shadow: 0 8px 25px rgba(16, 27, 64, 0.2);
-            transform: translateY(-8px);
-        }
-
-        .filter-card.selected {
-            border-color: #101b40;
-            border-width: 4px;
-            box-shadow: 0 8px 30px rgba(16, 27, 64, 0.3);
-        }
-
-        .filter-preview {
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(135deg, #ff6b6b, #ffd93d);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 700;
-            font-size: 1.2em;
-        }
-
-        .filter-preview.bw {
-            background: linear-gradient(135deg, #333, #999);
-        }
-
-        .filter-info {
-            padding: 20px;
-            text-align: center;
-        }
-
-        .filter-name {
-            font-size: 1.3em;
-            font-weight: 700;
+            background: transparent;
             color: #101b40;
-            margin-bottom: 8px;
+            text-decoration: none;
         }
-
-        .filter-desc {
-            font-size: 0.95em;
-            color: #666;
-        }
-
-        .selection-section {
-            background: #f0f4ff;
-            padding: 40px;
-            border-radius: 16px;
-            max-width: 700px;
-            text-align: center;
-        }
-
-        .selection-title {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: #101b40;
-            margin-bottom: 20px;
-        }
-
-        .instruction {
-            font-size: 1.1em;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .detected-text {
-            font-size: 1.1em;
-            font-weight: 700;
-            color: #101b40;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .status-message {
-            font-size: 1em;
-            color: #777;
-            margin-top: 20px;
-        }
-
+        .nav-btn.active { background-color: #101b40; color: white; }
+        .nav-btn:hover:not(.active) { background-color: #e6e6e6; }
+ 
+        .main-content { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 60px 50px; gap: 28px; }
+        .title-block { text-align: center; }
+        .page-title { font-size: 2.5em; font-weight: 800; color: #101b40; margin-bottom: 8px; }
+        .instruction { font-size: 0.75em; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #555; }
+        .instruction strong { color: #101b40; font-weight: 700; }
+ 
+        .filters-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 50px; width: 100%; max-width: 700px; }
+        .filter-card { display: flex; flex-direction: column; align-items: center; gap: 14px; cursor: pointer; }
+        .strip-canvas { width: 100%; max-width: 240px; height: auto; border-radius: 8px; display: block; transition: transform 0.25s ease, box-shadow 0.25s ease; box-shadow: 0 4px 16px rgba(0,0,0,0.10); }
+        .filter-card:hover .strip-canvas { transform: translateY(-6px); box-shadow: 0 10px 28px rgba(16,27,64,0.18); }
+        .filter-card.selected .strip-canvas { outline: 4px solid #101b40; border-radius: 8px; transform: translateY(-6px); box-shadow: 0 10px 28px rgba(16,27,64,0.25); }
+        .filter-name { font-size: 1.2em; font-weight: 700; color: #101b40; text-align: center; }
+        .filter-cmd { font-size: 0.72em; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #777; text-align: center; }
+        .filter-cmd strong { color: #101b40; font-weight: 700; }
+ 
+        .bottom-status { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .mic-status { font-size: 0.8em; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #101b40; display: flex; align-items: center; gap: 8px; }
+        .mic-dot { width: 9px; height: 9px; border-radius: 50%; background: #e74c3c; animation: pulse 1s infinite; flex-shrink: 0; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
+        .feedback { font-size: 0.72em; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #888; min-height: 18px; text-align: center; }
+ 
+        .overlay-backdrop { display: none; position: fixed; inset: 0; background: rgba(241,241,241,0.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); z-index: 100; align-items: center; justify-content: center; }
+        .overlay-backdrop.active { display: flex; }
+        .overlay-card { background: white; border: 2.5px solid #101b40; border-radius: 16px; padding: 32px 36px; width: 100%; max-width: 340px; display: flex; flex-direction: column; align-items: center; gap: 20px; box-shadow: 0 20px 60px rgba(16,27,64,0.18); animation: popIn 0.2s ease; }
+        @keyframes popIn { from{transform:scale(0.93);opacity:0} to{transform:scale(1);opacity:1} }
+        .overlay-title { font-size: 1.25em; font-weight: 800; color: #101b40; text-align: center; white-space: nowrap; }
+        #overlayCanvas { width: 130px; height: auto; border-radius: 6px; display: block; box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+        .overlay-instruction { font-size: 0.88em; font-weight: 500; color: #444; white-space: nowrap; display: flex; align-items: center; gap: 7px; }
+        .overlay-instruction strong { color: #101b40; font-weight: 700; }
+        .listening-bar { width: 100%; padding: 13px 20px; background: #f0f0f0; border-radius: 50px; font-size: 0.9em; font-weight: 600; color: #555; text-align: center; letter-spacing: 0.04em; }
+ 
         @media (max-width: 768px) {
-            .page-title {
-                font-size: 1.8em;
-            }
-
-            .filters-container {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-
-            .filter-preview {
-                height: 180px;
-            }
+            nav { padding: 20px 30px; }
+            .nav-menu { position: static; transform: none; margin-top: 10px; }
+            .filters-grid { gap: 24px; }
+            .page-title { font-size: 1.8em; }
+            .overlay-instruction { white-space: normal; flex-wrap: wrap; justify-content: center; }
         }
     </style>
 </head>
 <body>
     <nav>
-        <div class="logo">
-            <span>VISION</span>
-            <span>BOOTH</span>
+        <div class="logo"><span>VISION</span><span>BOOTH</span></div>
+        <div class="nav-menu">
+            <a href="/"      class="nav-btn">HOME</a>
+            <a href="/guide" class="nav-btn">GUIDE</a>
+            <a href="/index" class="nav-btn active">PHOTOBOOTH</a>
+            <a href="/about" class="nav-btn">ABOUT</a>
         </div>
     </nav>
-
+ 
     <div class="main-content">
-        <h1 class="page-title">Apply a Filter</h1>
-        <div class="subtitle">Choose how you want your photos to look</div>
-
-        <div class="filters-container">
-            <div class="filter-card" id="filterNormal" onclick="selectFilter('normal')">
-                <div class="filter-preview">
-                    Color
-                </div>
-                <div class="filter-info">
-                    <div class="filter-name">Normal</div>
-                    <div class="filter-desc">Keep original colors</div>
-                </div>
+        <div class="title-block">
+            <h1 class="page-title">Apply a Filter</h1>
+            <p class="instruction">Say <strong>"NORMAL"</strong>, or <strong>"BLACK AND WHITE"</strong></p>
+        </div>
+        <div class="filters-grid">
+            <div class="filter-card" id="cardNormal" onclick="handleCardClick('normal')">
+                <canvas class="strip-canvas" id="canvasNormal"></canvas>
+                <div class="filter-name">Normal</div>
+                <div class="filter-cmd">Say <strong>"NORMAL"</strong></div>
             </div>
-
-            <div class="filter-card" id="filterBW" onclick="selectFilter('bw')">
-                <div class="filter-preview bw">
-                    Black & White
-                </div>
-                <div class="filter-info">
-                    <div class="filter-name">Black & White</div>
-                    <div class="filter-desc">Classic timeless look</div>
-                </div>
+            <div class="filter-card" id="cardBW" onclick="handleCardClick('bw')">
+                <canvas class="strip-canvas" id="canvasBW"></canvas>
+                <div class="filter-name">Black &amp; White</div>
+                <div class="filter-cmd">Say <strong>"BLACK AND WHITE"</strong></div>
             </div>
         </div>
-
-        <div class="selection-section">
-            <div class="selection-title">Select a filter</div>
-            <div class="instruction">Say "ONE" for Normal or "TWO" for Black & White</div>
-            
-            <div class="detected-text" id="detectedText">
-                Waiting for voice input...
+        <div class="bottom-status">
+            <div class="mic-status"><div class="mic-dot"></div><span id="micLabel">Microphone listening...</span></div>
+            <div class="feedback" id="feedbackText"></div>
+        </div>
+    </div>
+ 
+    <div class="overlay-backdrop" id="overlayBackdrop">
+        <div class="overlay-card">
+            <div class="overlay-title" id="overlayTitle">Filter selected</div>
+            <canvas id="overlayCanvas"></canvas>
+            <div class="overlay-instruction">
+                <div class="mic-dot"></div>
+                Say <strong>"YES"</strong> to confirm or <strong>"NO"</strong> to pick again
             </div>
-
-            <div class="status-message" id="statusMessage"></div>
+            <div class="listening-bar" id="listeningBar">Listening...</div>
         </div>
     </div>
 
     <script>
         const socket = io();
-        let selectedFilter = null;
 
+        let capturedPhotos   = [];
+        let templateImgEl    = null;   // loaded Image object for the chosen template
+        let pendingFilter    = null;
+        let phase            = 'SELECT';
+        let selectionLocked  = false;
+
+        // ── On connect ───────────────────────────────────────────────────
         socket.on('connect', () => {
-            console.log('Connected to server');
-            startListening();
+            socket.emit('request_retake_photos');
+            socket.emit('request_session_info');
         });
 
-        socket.on('voice_detected_filter', (data) => {
-            const detected = data.detected_text || 'Not recognized';
-            document.getElementById('detectedText').textContent = `You said: "${detected}"`;
-            
-            if (data.is_valid && data.matched_command) {
-                const filterMap = {
-                    'ONE': 'normal',
-                    'TWO': 'bw'
-                };
-                const filter = filterMap[data.matched_command];
-                if (filter) {
-                    selectFilter(filter);
-                }
-            } else {
-                document.getElementById('statusMessage').textContent = 'Not recognized. Please say ONE or TWO.';
-                setTimeout(() => startListening(), 2000);
+        socket.on('photos_for_retake', (data) => {
+            capturedPhotos = data.photos || [];
+            tryRender();
+        });
+
+        socket.on('session_info', (data) => {
+            const num = data.selected_template || 1;
+            const src = `/static/images/template_${num}.png`;
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = () => {
+                templateImgEl = img;
+                tryRender();
+                startSelectListening();
+            };
+            img.onerror = () => {
+                // Template image unavailable — still render photos only
+                templateImgEl = null;
+                tryRender();
+                startSelectListening();
+            };
+            img.src = src;
+        });
+
+        // Fallback if session_info never fires
+        setTimeout(() => {
+            if (!templateImgEl && capturedPhotos.length) {
+                tryRender();
+                startSelectListening();
             }
-        });
+        }, 1500);
 
-        socket.on('filter_selected', (data) => {
-            console.log('Filter confirmed:', data.filter);
-            document.getElementById('statusMessage').textContent = 'Generating your photo strip...';
-            setTimeout(() => {
-                window.location.href = '/final_preview';
-            }, 1500);
-        });
-
-        function selectFilter(filter) {
-            selectedFilter = filter;
-            
-            // Update UI
-            document.getElementById('filterNormal').classList.remove('selected');
-            document.getElementById('filterBW').classList.remove('selected');
-            
-            if (filter === 'normal') {
-                document.getElementById('filterNormal').classList.add('selected');
-                document.getElementById('statusMessage').textContent = 'Normal filter selected!';
-            } else if (filter === 'bw') {
-                document.getElementById('filterBW').classList.add('selected');
-                document.getElementById('statusMessage').textContent = 'Black & White filter selected!';
-            }
-            
-            // Notify server
-            socket.emit('select_filter', { filter: filter });
+        function tryRender() {
+            if (!capturedPhotos.length) return;
+            drawStrip(document.getElementById('canvasNormal'), false);
+            drawStrip(document.getElementById('canvasBW'),     true);
         }
 
-        function startListening() {
-            socket.emit('start_listening_filter', {
-                expected_commands: ['ONE', 'TWO']
+        // ── Canvas compositing ───────────────────────────────────────────
+        /**
+         * Draw photos into slot positions detected from the template,
+         * then overlay the template on top — same logic as filter_processor.py
+         *
+         * @param {HTMLCanvasElement} canvas
+         * @param {boolean} grayscale
+         */
+        function drawStrip(canvas, grayscale) {
+            if (!templateImgEl) {
+                // No template — just draw 2×2 photo grid as fallback
+                const W = 300, H = 600;
+                canvas.width = W; canvas.height = H;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#eee';
+                ctx.fillRect(0, 0, W, H);
+                const hw = W / 2, hh = H / 2;
+                capturedPhotos.slice(0, 4).forEach((src, i) => {
+                    loadAndDraw(ctx, src, (i % 2) * hw, Math.floor(i / 2) * hh, hw, hh, grayscale);
+                });
+                return;
+            }
+
+            const TW = templateImgEl.naturalWidth;
+            const TH = templateImgEl.naturalHeight;
+            canvas.width  = TW;
+            canvas.height = TH;
+
+            const ctx = canvas.getContext('2d');
+
+            // White base
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, TW, TH);
+
+            // Detect slots from the template pixel data
+            const slots = detectSlots(templateImgEl, TW, TH, capturedPhotos.length);
+
+            // Draw each photo into its slot
+            const promises = capturedPhotos.slice(0, slots.length).map((src, i) => {
+                return new Promise(resolve => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const [x1, y1, x2, y2] = slots[i];
+                        const sw = x2 - x1, sh = y2 - y1;
+
+                        // Offscreen canvas for optional grayscale
+                        const off = document.createElement('canvas');
+                        off.width = sw; off.height = sh;
+                        const octx = off.getContext('2d');
+
+                        // Centre-crop
+                        const targetAspect = sw / sh;
+                        const photoAspect  = img.naturalWidth / img.naturalHeight;
+                        let sx = 0, sy = 0, sW = img.naturalWidth, sH = img.naturalHeight;
+                        if (photoAspect > targetAspect) {
+                            sW = Math.round(img.naturalHeight * targetAspect);
+                            sx = Math.round((img.naturalWidth - sW) / 2);
+                        } else {
+                            sH = Math.round(img.naturalWidth / targetAspect);
+                            sy = Math.round((img.naturalHeight - sH) / 2);
+                        }
+
+                        octx.drawImage(img, sx, sy, sW, sH, 0, 0, sw, sh);
+
+                        if (grayscale) {
+                            const id = octx.getImageData(0, 0, sw, sh);
+                            const d  = id.data;
+                            for (let p = 0; p < d.length; p += 4) {
+                                const g = 0.299 * d[p] + 0.587 * d[p+1] + 0.114 * d[p+2];
+                                d[p] = d[p+1] = d[p+2] = g;
+                            }
+                            octx.putImageData(id, 0, 0);
+                        }
+
+                        ctx.drawImage(off, x1, y1);
+                        resolve();
+                    };
+                    img.onerror = resolve;
+                    img.src = src;
+                });
             });
+
+            // Once all photos are drawn, overlay the template
+            Promise.all(promises).then(() => {
+                ctx.drawImage(templateImgEl, 0, 0, TW, TH);
+            });
+        }
+
+        /**
+         * Detect photo slot bounding boxes from the template image.
+         * Mirrors the Python logic: find rows of high saturation (colored borders),
+         * gaps between them = photo slots. Falls back to equal division.
+         */
+        function detectSlots(imgEl, W, H, n) {
+            try {
+                const off = document.createElement('canvas');
+                off.width = W; off.height = H;
+                const ctx = off.getContext('2d');
+                ctx.drawImage(imgEl, 0, 0);
+                const data = ctx.getImageData(0, 0, W, H).data;
+
+                // Per-row mean saturation
+                const rowSat = new Float32Array(H);
+                for (let y = 0; y < H; y++) {
+                    let total = 0;
+                    for (let x = 0; x < W; x++) {
+                        const i = (y * W + x) * 4;
+                        const r = data[i], g = data[i+1], b = data[i+2];
+                        const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+                        total += (mx - mn) / (mx + 1);
+                    }
+                    rowSat[y] = total / W;
+                }
+
+                // Find border bands (high saturation rows)
+                const SAT = 0.25;
+                const bands = [];
+                let inBand = false, bandStart = 0;
+                for (let y = 0; y < H; y++) {
+                    if (rowSat[y] > SAT && !inBand) { bandStart = y; inBand = true; }
+                    else if (rowSat[y] <= SAT && inBand) { bands.push([bandStart, y-1]); inBand = false; }
+                }
+                if (inBand) bands.push([bandStart, H-1]);
+
+                if (bands.length < 2) throw new Error('not enough bands');
+
+                // Gaps between bands = photo slots
+                const gaps = [];
+                if (bands[0][0] > 5) gaps.push([0, bands[0][0]-1]);
+                for (let i = 0; i < bands.length-1; i++) {
+                    const y1 = bands[i][1]+1, y2 = bands[i+1][0]-1;
+                    if (y2 - y1 > 10) gaps.push([y1, y2]);
+                }
+                const lastEnd = bands[bands.length-1][1];
+                if (H - lastEnd > 20) gaps.push([lastEnd+1, H-1]);
+
+                // Pick n largest gaps
+                const sorted = [...gaps].sort((a,b) => (b[1]-b[0]) - (a[1]-a[0])).slice(0, n);
+                const slots  = sorted.sort((a,b) => a[0]-b[0]);
+
+                if (slots.length < n) throw new Error('not enough slots');
+                return slots.map(([y1,y2]) => [0, y1, W, y2]);
+
+            } catch(e) {
+                console.warn('Slot detection failed, using fallback:', e.message);
+                const slotH = Math.floor(H / n);
+                return Array.from({length: n}, (_, i) => [0, i*slotH, W, (i+1)*slotH]);
+            }
+        }
+
+        function loadAndDraw(ctx, src, dx, dy, dw, dh, grayscale) {
+            const img = new Image();
+            img.onload = () => {
+                if (grayscale) {
+                    const off = document.createElement('canvas');
+                    off.width = dw; off.height = dh;
+                    const o = off.getContext('2d');
+                    o.drawImage(img, dx, dy, dw, dh, 0, 0, dw, dh);
+                    const id = o.getImageData(0,0,dw,dh);
+                    for (let p=0;p<id.data.length;p+=4){
+                        const g=0.299*id.data[p]+0.587*id.data[p+1]+0.114*id.data[p+2];
+                        id.data[p]=id.data[p+1]=id.data[p+2]=g;
+                    }
+                    o.putImageData(id,0,0);
+                    ctx.drawImage(off, dx, dy);
+                } else {
+                    ctx.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, dx, dy, dw, dh);
+                }
+            };
+            img.src = src;
+        }
+
+        // ── Voice events ─────────────────────────────────────────────────
+        socket.on('voice_detected_filter', (data) => {
+            if (selectionLocked) return;
+            const detected = data.detected_text || 'Not recognized';
+
+            if (phase === 'SELECT') {
+                document.getElementById('micLabel').textContent = `You said: "${detected}"`;
+                if (data.is_valid && data.matched_command) {
+                    const map = { 'NORMAL':'normal','COLOR':'normal','BLACK AND WHITE':'bw','BLACK WHITE':'bw' };
+                    const filter = map[data.matched_command];
+                    if (filter) showOverlay(filter);
+                    else { setFeedback('Say NORMAL or BLACK AND WHITE.'); setTimeout(()=>{resetFeedback();startSelectListening();},1800); }
+                } else {
+                    setFeedback('Not recognized. Please try again...');
+                    setTimeout(()=>{resetFeedback();startSelectListening();},1800);
+                }
+            } else if (phase === 'CONFIRM') {
+                document.getElementById('listeningBar').textContent = `You said: "${detected}"`;
+                if (data.is_valid) {
+                    if (data.matched_command === 'YES') confirmSelection();
+                    else if (data.matched_command === 'NO') hideOverlay();
+                    else { document.getElementById('listeningBar').textContent='Say YES or NO...'; setTimeout(startConfirmListening,1500); }
+                } else {
+                    document.getElementById('listeningBar').textContent='Not recognized — say YES or NO.';
+                    setTimeout(startConfirmListening,1500);
+                }
+            }
+        });
+
+        socket.on('filter_selected', () => {
+            if (selectionLocked) return;
+            selectionLocked = true;
+            setFeedback('Generating your photo strip...');
+            setTimeout(()=>{ window.location.href='/final_preview'; },1000);
+        });
+
+        // ── Overlay ───────────────────────────────────────────────────────
+        function showOverlay(filter) {
+            phase = 'CONFIRM';
+            pendingFilter = filter;
+            highlightCard(filter);
+
+            const label = filter==='bw' ? 'Black & White' : 'Normal';
+            document.getElementById('overlayTitle').textContent = `"${label}" selected`;
+            drawStrip(document.getElementById('overlayCanvas'), filter==='bw');
+            document.getElementById('listeningBar').textContent = 'Listening...';
+            document.getElementById('overlayBackdrop').classList.add('active');
+            startConfirmListening();
+        }
+
+        function hideOverlay() {
+            phase = 'SELECT'; pendingFilter = null; highlightCard(null);
+            document.getElementById('overlayBackdrop').classList.remove('active');
+            document.getElementById('micLabel').textContent = 'Microphone listening...';
+            resetFeedback();
+            startSelectListening();
+        }
+
+        function confirmSelection() {
+            if (selectionLocked) return;
+            socket.emit('select_filter', { filter: pendingFilter });
+        }
+
+        function highlightCard(filter) {
+            document.getElementById('cardNormal').classList.toggle('selected', filter==='normal');
+            document.getElementById('cardBW').classList.toggle('selected', filter==='bw');
+        }
+
+        function handleCardClick(filter) {
+            if (selectionLocked) return;
+            if (phase==='CONFIRM' && pendingFilter===filter) confirmSelection();
+            else showOverlay(filter);
+        }
+
+        function setFeedback(msg)  { document.getElementById('feedbackText').textContent=msg; }
+        function resetFeedback()   { document.getElementById('feedbackText').textContent=''; }
+
+        function startSelectListening() {
+            if (selectionLocked) return;
+            socket.emit('start_listening_filter', { expected_commands:['NORMAL','COLOR','BLACK AND WHITE','BLACK WHITE'] });
+        }
+
+        function startConfirmListening() {
+            if (selectionLocked) return;
+            socket.emit('start_listening_filter', { expected_commands:['YES','NO'] });
         }
     </script>
 </body>

@@ -6,221 +6,107 @@
     <title>Your Photo Strip - VisionBooth</title>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background-color: #f1f1f1;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             color: #101b40;
         }
-
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 35px 90px;
             background-color: #f1f1f1;
-        }
-
-        .logo {
-            font-size: 1.2em;
-            font-weight: 700;
-            color: #101b40;
-            line-height: 1.2;
-        }
-
-        .logo span {
-            display: block;
-        }
-
-        .main-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
+            position: relative;
             width: 100%;
         }
-
-        .container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 60px;
-            flex-wrap: wrap;
-        }
-
-        .preview-section {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: white;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        .preview-section img {
-            max-width: 280px;
-            height: auto;
-            border-radius: 8px;
-        }
-
-        .info-section {
-            text-align: center;
-            max-width: 500px;
-        }
-
-        .thank-you-text {
-            font-size: 1.3em;
-            font-weight: 500;
-            color: #666;
-            margin-bottom: 12px;
-        }
-
-        .title {
-            font-size: 3.5em;
-            font-weight: 900;
-            color: #101b40;
-            margin-bottom: 20px;
-            line-height: 1.1;
-        }
-
-        .ready-text {
-            font-size: 1.3em;
-            font-weight: 400;
-            color: #101b40;
-            margin-bottom: 40px;
-        }
-
-        .button-group {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 15px 50px;
-            font-size: 1.1em;
-            font-weight: 700;
-            border-radius: 50px;
+        .logo { font-size: 1.2em; font-weight: 700; color: #101b40; line-height: 1.2; }
+        .logo span { display: block; }
+        .nav-menu {
+            background-color: #f1f1f1;
             border: 2.5px solid #101b40;
+            border-radius: 50px;
+            padding: 6px;
+            display: flex;
+            gap: 5px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 3px 12px rgba(16,27,64,0.12);
+        }
+        .nav-btn {
+            padding: 10px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 0.95em;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            min-width: 240px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .download-btn {
-            background-color: #101b40;
-            color: white;
-        }
-
-        .download-btn:hover {
-            background-color: white;
+            background: transparent;
             color: #101b40;
-            transform: translateY(-2px);
+            text-decoration: none;
         }
-
-        .retake-btn {
-            background-color: transparent;
-            color: #101b40;
-        }
-
-        .retake-btn:hover {
-            background-color: #101b40;
-            color: white;
-            transform: translateY(-2px);
-        }
-
-        .loading {
-            font-size: 1.1em;
-            color: #666;
-            text-align: center;
-            padding: 40px;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #101b40;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 15px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
+        .nav-btn.active { background-color: #101b40; color: white; }
+        .nav-btn:hover:not(.active) { background-color: #e6e6e6; }
+ 
+        .main-content { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .container { display: flex; align-items: center; justify-content: center; gap: 60px; flex-wrap: wrap; }
+        .strip-img { max-width: 260px; width: 100%; height: auto; border-radius: 12px; display: block; box-shadow: 0 12px 40px rgba(0,0,0,0.18); }
+        .info-section { text-align: center; max-width: 480px; }
+        .thank-you-text { font-size: 1.3em; font-weight: 500; color: #666; margin-bottom: 12px; }
+        .title { font-size: 3.5em; font-weight: 900; color: #101b40; margin-bottom: 20px; line-height: 1.1; }
+        .ready-text { font-size: 1.3em; font-weight: 400; color: #101b40; margin-bottom: 40px; }
+        .button-group { display: flex; flex-direction: column; gap: 15px; align-items: center; }
+        .btn { padding: 15px 50px; font-size: 1.1em; font-weight: 700; border-radius: 50px; border: 2.5px solid #101b40; cursor: pointer; transition: all 0.3s ease; min-width: 240px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        .download-btn { background-color: #101b40; color: white; }
+        .download-btn:hover:not(:disabled) { background-color: white; color: #101b40; transform: translateY(-2px); }
+        .retake-btn { background-color: transparent; color: #101b40; }
+        .retake-btn:hover:not(:disabled) { background-color: #101b40; color: white; transform: translateY(-2px); }
+        .loading { font-size: 1.1em; color: #666; text-align: center; padding: 40px; display: flex; align-items: center; gap: 15px; }
+        .loading-spinner { width: 36px; height: 36px; border: 4px solid #ddd; border-top: 4px solid #101b40; border-radius: 50%; animation: spin 1s linear infinite; flex-shrink: 0; }
+        @keyframes spin { 100%{transform:rotate(360deg)} }
         @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
-                gap: 40px;
-            }
-
-            .preview-section {
-                padding: 20px;
-            }
-
-            .preview-section img {
-                max-width: 200px;
-            }
-
-            .title {
-                font-size: 2.5em;
-            }
-
-            .btn {
-                width: 100%;
-                max-width: 300px;
-            }
+            nav { padding: 20px 30px; }
+            .nav-menu { position: static; transform: none; margin-top: 10px; }
+            .container { flex-direction: column; gap: 40px; }
+            .strip-img { max-width: 200px; }
+            .title { font-size: 2.5em; }
+            .btn { width: 100%; max-width: 300px; }
         }
     </style>
 </head>
 <body>
     <nav>
-        <div class="logo">
-            <span>VISION</span>
-            <span>BOOTH</span>
+        <div class="logo"><span>VISION</span><span>BOOTH</span></div>
+        <div class="nav-menu">
+            <a href="/"      class="nav-btn">HOME</a>
+            <a href="/guide" class="nav-btn">GUIDE</a>
+            <a href="/index" class="nav-btn active">PHOTOBOOTH</a>
+            <a href="/about" class="nav-btn">ABOUT</a>
         </div>
     </nav>
-
+ 
     <div class="main-content">
-        <div id="loadingState" class="loading" style="display: none;">
+        <div id="loadingState" class="loading">
             <div class="loading-spinner"></div>
             <div>Creating your photo strip...</div>
         </div>
-
-        <div id="contentState" style="display: none;">
+ 
+        <div id="contentState" style="display:none;">
             <div class="container">
-                <div class="preview-section">
-                    <img id="stripPreview" src="" alt="Your photo strip" />
-                </div>
-
+                <img id="stripPreview" class="strip-img" src="" alt="Your photo strip" />
                 <div class="info-section">
                     <p class="thank-you-text">Thank you for trying out</p>
                     <h1 class="title">VisionBooth</h1>
                     <p class="ready-text">Your photo strip is ready!</p>
-
                     <div class="button-group">
-                        <button class="btn download-btn" onclick="downloadStrip()">Download</button>
-                        <button class="btn retake-btn" onclick="startNewSession()">Take Another</button>
+                        <button class="btn download-btn" id="downloadBtn" onclick="downloadStrip()">Download</button>
+                        <button class="btn retake-btn" id="retakeBtn" onclick="startNewSession()">Take Another</button>
                     </div>
                 </div>
             </div>
@@ -232,60 +118,41 @@
         let stripFilename = null;
 
         socket.on('connect', () => {
-            console.log('Connected to server');
-            document.getElementById('loadingState').style.display = 'block';
-            requestStripPreview();
+            document.getElementById('loadingState').style.display = 'flex';
+            socket.emit('request_final_preview');
         });
 
         socket.on('strip_preview_ready', (data) => {
-            console.log('Strip preview received:', data.filename);
             stripFilename = data.filename;
-            displayPreview(data.filename);
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('contentState').style.display = 'block';
+            document.getElementById('stripPreview').src = `/${data.filename}`;
         });
 
         socket.on('strip_generation_error', (data) => {
-            console.error('Error generating strip:', data.error);
             document.getElementById('loadingState').innerHTML = `
-                <div style="color: #e74c3c;">
+                <div style="color:#e74c3c; text-align:center;">
                     Error: ${data.error}<br>
-                    <button onclick="window.location.href='/index'" style="margin-top: 20px; padding: 10px 30px; background: #101b40; color: white; border: none; border-radius: 25px; cursor: pointer;">
+                    <button onclick="window.location.href='/index'"
+                        style="margin-top:20px;padding:10px 30px;background:#101b40;color:white;border:none;border-radius:25px;cursor:pointer;font-size:1em;">
                         Start Over
                     </button>
-                </div>
-            `;
+                </div>`;
         });
 
-        function requestStripPreview() {
-            socket.emit('request_final_preview');
-        }
-
-        function displayPreview(filename) {
-            document.getElementById('loadingState').style.display = 'none';
-            document.getElementById('contentState').style.display = 'block';
-            
-            const imgSrc = `/${filename}`;
-            document.getElementById('stripPreview').src = imgSrc;
-            console.log('Displaying preview:', imgSrc);
-        }
-
         function downloadStrip() {
-            if (stripFilename) {
-                const link = document.createElement('a');
-                link.href = `/${stripFilename}`;
-                link.download = stripFilename.split('/').pop();
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                console.log('Downloading:', stripFilename);
-            }
+            if (!stripFilename) return;
+            const a = document.createElement('a');
+            a.href = `/${stripFilename}`;
+            a.download = stripFilename.split('/').pop();
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
         function startNewSession() {
-            console.log('Starting new session');
             socket.emit('new_session_request');
-            setTimeout(() => {
-                window.location.href = '/index';
-            }, 500);
+            setTimeout(() => { window.location.href = '/index'; }, 500);
         }
     </script>
 </body>

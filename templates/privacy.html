@@ -5,46 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Notice - VisionBooth</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background-color: #f1f1f1;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             color: #101b40;
-            overflow-x: hidden;
         }
-
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 35px 90px;
             background-color: #f1f1f1;
+            position: relative;
             width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
         }
-
-        .logo {
-            font-size: 1.2em;
-            font-weight: 700;
-            color: #101b40;
-            letter-spacing: 0.5px;
-            text-align: left;
-            line-height: 1.2;
-        }
-
-        .logo span {
-            display: block;
-        }
-
+        .logo { font-size: 1.2em; font-weight: 700; color: #101b40; line-height: 1.2; }
+        .logo span { display: block; }
         .nav-menu {
             background-color: #f1f1f1;
             border: 2.5px solid #101b40;
@@ -55,9 +35,8 @@
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            box-shadow: 0 3px 12px rgba(16, 27, 64, 0.12);
+            box-shadow: 0 3px 12px rgba(16,27,64,0.12);
         }
-
         .nav-btn {
             padding: 10px 32px;
             border: none;
@@ -70,15 +49,8 @@
             color: #101b40;
             text-decoration: none;
         }
-
-        .nav-btn.active {
-            background-color: #101b40;
-            color: white;
-        }
-
-        .nav-btn:hover:not(.active) {
-            background-color: #f1f1f1;
-        }
+        .nav-btn.active { background-color: #101b40; color: white; }
+        .nav-btn:hover:not(.active) { background-color: #e6e6e6; }
 
         .main-content {
             flex: 1;
@@ -90,193 +62,72 @@
             max-width: 1000px;
             margin: 0 auto;
         }
-
-        .page-title {
-            font-size: 2.5em;
-            font-weight: 800;
-            color: #101b40;
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .privacy-container {
-            display: flex;
-            flex-direction: column;
-            gap: 25px;
-            width: 100%;
-        }
-
-        .privacy-section {
-            font-size: 1em;
-        }
-
-        .section-title {
-            font-size: 1.1em;
-            font-weight: 700;
-            color: #101b40;
-            margin-bottom: 10px;
-        }
-
-        .section-content {
-            font-size: 1.05em;
-            line-height: 1.6;
-            color: #000;
-        }
-
-        .highlight {
-            font-weight: 700;
-            color: #101b40;
-        }
-
-        .cta-section {
-            margin-top: 40px;
-            padding: 25px;
-            background-color: #f0f4ff;
-            border-radius: 12px;
-            text-align: center;
-        }
-
-        .cta-text {
-            font-size: 1.05em;
-            color: #101b40;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-        }
-
+        .page-title { font-size: 2.5em; font-weight: 800; color: #101b40; text-align: center; margin-bottom: 40px; }
+        .privacy-container { display: flex; flex-direction: column; gap: 25px; width: 100%; }
+        .section-title { font-size: 1.1em; font-weight: 700; color: #101b40; margin-bottom: 10px; }
+        .section-content { font-size: 1.05em; line-height: 1.6; color: #000; }
+        .highlight { font-weight: 700; color: #101b40; }
+        .cta-section { margin-top: 40px; padding: 25px; background-color: #f0f4ff; border-radius: 12px; text-align: center; }
+        .cta-text { font-size: 1.05em; color: #101b40; margin-bottom: 20px; font-weight: 600; }
+        .button-group { display: flex; gap: 15px; justify-content: center; }
         .agree-btn {
-            padding: 12px 45px;
-            font-size: 1em;
-            font-weight: 700;
-            color: white;
-            background-color: #101b40;
-            border: 2.5px solid #101b40;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
+            padding: 12px 45px; font-size: 1em; font-weight: 700;
+            color: white; background-color: #101b40;
+            border: 2.5px solid #101b40; border-radius: 50px;
+            cursor: pointer; transition: all 0.3s ease;
+            text-decoration: none; display: inline-block;
         }
-
-        .agree-btn:hover {
-            background-color: white;
-            color: #101b40;
-            transform: translateY(-2px);
-        }
-
+        .agree-btn:hover { background-color: white; color: #101b40; transform: translateY(-2px); }
         .decline-btn {
-            padding: 12px 45px;
-            font-size: 1em;
-            font-weight: 700;
-            color: #101b40;
-            background-color: white;
-            border: 2.5px solid #101b40;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
+            padding: 12px 45px; font-size: 1em; font-weight: 700;
+            color: #101b40; background-color: white;
+            border: 2.5px solid #101b40; border-radius: 50px;
+            cursor: pointer; transition: all 0.3s ease;
+            text-decoration: none; display: inline-block;
         }
-
-        .decline-btn:hover {
-            background-color: #f1f1f1;
-            color: #101b40;
-        }
-
-        @media (max-width: 1024px) {
-            nav {
-                padding: 30px 50px;
-            }
-
-            .main-content {
-                padding: 50px;
-            }
-
-            .page-title {
-                font-size: 2em;
-            }
-        }
-
+        .decline-btn:hover { background-color: #f1f1f1; }
         @media (max-width: 768px) {
-            .nav-menu {
-                position: static;
-                transform: none;
-                justify-content: center;
-                margin-top: 10px;
-            }
-
-            .main-content {
-                padding: 40px 30px;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-
-            .agree-btn, .decline-btn {
-                width: 100%;
-            }
+            nav { padding: 20px 30px; }
+            .nav-menu { position: static; transform: none; margin-top: 10px; }
+            .main-content { padding: 40px 30px; }
+            .button-group { flex-direction: column; }
         }
     </style>
 </head>
 <body>
     <nav>
-        <div class="logo">
-            <span>VISION</span>
-            <span>BOOTH</span>
-        </div>
+        <div class="logo"><span>VISION</span><span>BOOTH</span></div>
         <div class="nav-menu">
-            <a href="/" class="nav-btn">HOME</a>
-            <a href="/guide" class="nav-btn">GUIDE</a>
+            <a href="/"      class="nav-btn">HOME</a>
+            <a href="/guide" class="nav-btn active">GUIDE</a>
             <a href="/index" class="nav-btn">PHOTOBOOTH</a>
             <a href="/about" class="nav-btn">ABOUT</a>
         </div>
     </nav>
 
     <div class="main-content">
-        <h1 class="page-title">Privacy & Data Notice</h1>
-
+        <h1 class="page-title">Privacy &amp; Data Notice</h1>
         <div class="privacy-container">
             <div class="privacy-section">
                 <h2 class="section-title">Camera Access</h2>
-                <div class="section-content">
-                    VisionBooth requires access to your device's camera to capture photos. Your camera feed is processed locally on your device and is <span class="highlight">never stored or transmitted</span> to external servers unless you explicitly download your photos.
-                </div>
+                <div class="section-content">VisionBooth requires access to your device's camera to capture photos. Your camera feed is processed locally and is <span class="highlight">never stored or transmitted</span> to external servers unless you explicitly download your photos.</div>
             </div>
-
             <div class="privacy-section">
                 <h2 class="section-title">Microphone Access</h2>
-                <div class="section-content">
-                    VisionBooth uses your microphone to recognize voice commands ("START", "YES", "NO", etc.). Audio is processed locally and <span class="highlight">not recorded or stored</span> after command recognition is complete.
-                </div>
+                <div class="section-content">VisionBooth uses your microphone to recognize voice commands. Audio is processed locally and <span class="highlight">not recorded or stored</span> after command recognition.</div>
             </div>
-
             <div class="privacy-section">
                 <h2 class="section-title">Photo Storage</h2>
-                <div class="section-content">
-                    Your photo strips are stored locally on this device in the <span class="highlight">sessions</span> folder. You have full control over your photos and can delete them at any time. We do not upload, analyze, or share your images without your explicit consent.
-                </div>
+                <div class="section-content">Your photo strips are stored locally in the <span class="highlight">sessions</span> folder. You have full control and can delete them at any time.</div>
             </div>
-
             <div class="privacy-section">
                 <h2 class="section-title">Gesture Recognition</h2>
-                <div class="section-content">
-                    Hand gestures are detected using local computer vision technology. Gesture data is <span class="highlight">processed in real-time on your device</span> and not stored or transmitted.
-                </div>
+                <div class="section-content">Hand gestures are detected using local computer vision. Gesture data is <span class="highlight">processed in real-time on your device</span> and not stored or transmitted.</div>
             </div>
-
             <div class="privacy-section">
-                <h2 class="section-title">Contactless & Hygienic</h2>
-                <div class="section-content">
-                    VisionBooth is designed as a <span class="highlight">completely contactless experience</span>. You control the entire photo booth using only gestures and voice commands—no buttons to touch, no screens to interact with manually.
-                </div>
+                <h2 class="section-title">Contactless &amp; Hygienic</h2>
+                <div class="section-content">VisionBooth is a <span class="highlight">completely contactless experience</span>. Control everything using only gestures and voice — no buttons to touch.</div>
             </div>
-
             <div class="cta-section">
                 <div class="cta-text">By proceeding, you acknowledge that you have read and understood this privacy notice and agree to the use of camera and microphone.</div>
                 <div class="button-group">

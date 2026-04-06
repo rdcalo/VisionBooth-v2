@@ -6,270 +6,223 @@
     <title>Review Photos - VisionBooth</title>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background-color: #f1f1f1;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             color: #101b40;
         }
-
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 35px 90px;
             background-color: #f1f1f1;
+            position: relative;
+            width: 100%;
         }
-
-        .logo {
-            font-size: 1.2em;
-            font-weight: 700;
+        .logo { font-size: 1.2em; font-weight: 700; color: #101b40; line-height: 1.2; }
+        .logo span { display: block; }
+        .nav-menu {
+            background-color: #f1f1f1;
+            border: 2.5px solid #101b40;
+            border-radius: 50px;
+            padding: 6px;
+            display: flex;
+            gap: 5px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 3px 12px rgba(16,27,64,0.12);
+        }
+        .nav-btn {
+            padding: 10px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
             color: #101b40;
-            line-height: 1.2;
+            text-decoration: none;
         }
-
-        .logo span {
-            display: block;
-        }
-
+        .nav-btn.active { background-color: #101b40; color: white; }
+        .nav-btn:hover:not(.active) { background-color: #e6e6e6; }
+ 
         .main-content {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 60px 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
+            padding: 20px 40px 60px;
+            gap: 28px;
         }
-
-        .page-title {
-            font-size: 2.5em;
-            font-weight: 800;
-            color: #101b40;
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
+        .title-block { text-align: center; }
+        .page-title { font-size: 2.5em; font-weight: 800; color: #101b40; margin-bottom: 10px; }
+        .instruction { font-size: 0.85em; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #555; }
+        .instruction strong { color: #101b40; font-weight: 700; }
+ 
         .photos-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            margin-bottom: 60px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
             width: 100%;
-            max-width: 900px;
+            max-width: 560px;
         }
-
-        .photo-card {
-            aspect-ratio: 1;
-            background: white;
-            border: 4px solid #101b40;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(16, 27, 64, 0.15);
-        }
-
-        .photo-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .decision-section {
-            text-align: center;
-            background: #f0f4ff;
-            padding: 40px;
-            border-radius: 16px;
-            max-width: 700px;
-        }
-
-        .decision-title {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: #101b40;
-            margin-bottom: 20px;
-        }
-
-        .decision-subtitle {
-            font-size: 1.2em;
-            color: #101b40;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-
-        .voice-instruction {
-            font-size: 1em;
-            color: #666;
-            margin-bottom: 30px;
-            font-style: italic;
-        }
-
-        .detected-text {
-            font-size: 1.1em;
-            font-weight: 700;
-            color: #101b40;
-            padding: 15px;
-            background: white;
+        .photo-cell {
+            aspect-ratio: 4 / 3;
+            background: #b5bf4a;
             border-radius: 8px;
-            margin-bottom: 20px;
-            min-height: 50px;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-
-        .button-group {
+        .photo-cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .photo-label { font-size: 1.1em; font-weight: 700; color: #101b40; }
+ 
+        .mic-status {
+            font-size: 0.85em;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #101b40;
             display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin-top: 30px;
+            align-items: center;
+            gap: 10px;
         }
-
-        .retake-btn {
+        .mic-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: #e74c3c;
+            animation: pulse 1s infinite;
+            flex-shrink: 0;
+        }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
+ 
+        .btn-group { display: flex; gap: 20px; }
+        .btn {
             padding: 15px 50px;
+            font-family: 'Poppins', sans-serif;
             font-size: 1.1em;
             font-weight: 700;
-            color: white;
-            background-color: #e74c3c;
-            border: 2.5px solid #e74c3c;
             border-radius: 50px;
+            border: 2.5px solid #101b40;
+            background: transparent;
+            color: #101b40;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: background 0.25s ease, color 0.25s ease, transform 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 200px;
         }
-
-        .retake-btn:hover {
-            background-color: #c0392b;
-            transform: translateY(-2px);
-        }
-
-        .continue-btn {
-            padding: 15px 50px;
-            font-size: 1.1em;
-            font-weight: 700;
-            color: white;
-            background-color: #27ae60;
-            border: 2.5px solid #27ae60;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .continue-btn:hover {
-            background-color: #229954;
-            transform: translateY(-2px);
-        }
-
-        .status-message {
-            font-size: 1em;
-            color: #777;
-            margin-top: 20px;
-            text-align: center;
-        }
-
+        .btn:hover { background: #101b40; color: white; transform: translateY(-2px); }
+        .btn:active { transform: translateY(0); }
+ 
+        .feedback { font-size: 0.8em; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #888; min-height: 20px; text-align: center; }
+ 
         @media (max-width: 768px) {
-            .page-title {
-                font-size: 1.8em;
-            }
-
-            .photos-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
-            }
-
-            .decision-section {
-                padding: 30px 20px;
-            }
-
-            .button-group {
-                flex-direction: column;
-            }
-
-            .retake-btn, .continue-btn {
-                width: 100%;
-            }
+            nav { padding: 20px 30px; }
+            .nav-menu { position: static; transform: none; margin-top: 10px; }
+            .photos-grid { max-width: 400px; }
+            .page-title { font-size: 1.8em; }
+            .btn-group { flex-direction: column; align-items: center; }
+            .btn { width: 260px; }
         }
     </style>
 </head>
 <body>
     <nav>
-        <div class="logo">
-            <span>VISION</span>
-            <span>BOOTH</span>
+        <div class="logo"><span>VISION</span><span>BOOTH</span></div>
+        <div class="nav-menu">
+            <a href="/"      class="nav-btn">HOME</a>
+            <a href="/guide" class="nav-btn">GUIDE</a>
+            <a href="/index" class="nav-btn active">PHOTOBOOTH</a>
+            <a href="/about" class="nav-btn">ABOUT</a>
         </div>
     </nav>
-
+ 
     <div class="main-content">
-        <h1 class="page-title">Review Your Photos</h1>
-
+        <div class="title-block">
+            <h1 class="page-title">Review your Photos!</h1>
+            <p class="instruction">Say <strong>YES</strong> to retake, or <strong>NO</strong> to continue</p>
+        </div>
+ 
         <div class="photos-grid" id="photosGrid">
-            <!-- Photo thumbnails will be populated here -->
+            <div class="photo-cell"><span class="photo-label">Photo 1</span></div>
+            <div class="photo-cell"><span class="photo-label">Photo 2</span></div>
+            <div class="photo-cell"><span class="photo-label">Photo 3</span></div>
+            <div class="photo-cell"><span class="photo-label">Photo 4</span></div>
         </div>
-
-        <div class="decision-section">
-            <div class="decision-title">Do you want to retake your photos?</div>
-            <div class="decision-subtitle">Say YES to retake or NO to continue</div>
-            
-            <div class="voice-instruction">
-                🎤 Listening for your response...
-            </div>
-
-            <div class="detected-text" id="detectedText">
-                Waiting for voice input...
-            </div>
-
-            <div class="button-group">
-                <button class="retake-btn" onclick="handleRetake()">Retake (Yes)</button>
-                <button class="continue-btn" onclick="handleContinue()">Continue (No)</button>
-            </div>
-
-            <div class="status-message" id="statusMessage"></div>
+ 
+        <div class="mic-status">
+            <div class="mic-dot"></div>
+            <span id="micLabel">Microphone listening...</span>
         </div>
+ 
+        <div class="btn-group">
+            <button class="btn" onclick="handleRetake()">Yes (Retake)</button>
+            <button class="btn" onclick="handleContinue()">No (Continue)</button>
+        </div>
+ 
+        <div class="feedback" id="feedbackText"></div>
     </div>
 
     <script>
-        const socket = io();
-        let allPhotos = [];
+        const socket        = io();
+        let allPhotos       = [];
         let listeningActive = false;
 
         socket.on('connect', () => {
-            console.log('Connected to server');
             requestPhotos();
             startListening();
         });
 
         socket.on('photos_for_retake', (data) => {
-            console.log('Received photos for retake');
             allPhotos = data.photos || [];
             displayPhotos();
         });
 
-        socket.on('retake_response', (data) => {
-            console.log('Server response:', data);
-            if (data.action === 'retake') {
-                window.location.href = '/index';
-            } else if (data.action === 'continue') {
-                window.location.href = '/template_selection';
+        socket.on('voice_detected_retake', (data) => {
+            const detected = data.detected_text || 'Not recognized';
+            document.getElementById('micLabel').textContent = `You said: "${detected}"`;
+
+            if (data.is_valid) {
+                if (data.matched_command === 'YES') handleRetake();
+                else if (data.matched_command === 'NO') handleContinue();
+            } else {
+                document.getElementById('feedbackText').textContent =
+                    'Not recognized. Please try again...';
+                setTimeout(() => {
+                    document.getElementById('feedbackText').textContent = '';
+                    document.getElementById('micLabel').textContent = 'Microphone listening...';
+                    listeningActive = false;
+                    startListening();
+                }, 1800);
             }
+        });
+
+        socket.on('retake_response', (data) => {
+            if (data.action === 'retake')        window.location.href = '/index';
+            else if (data.action === 'continue') window.location.href = '/template_selection';
         });
 
         function displayPhotos() {
             const grid = document.getElementById('photosGrid');
             grid.innerHTML = '';
-            
-            allPhotos.forEach((photoData, index) => {
-                const card = document.createElement('div');
-                card.className = 'photo-card';
-                card.innerHTML = `<img src="${photoData}" alt="Photo ${index + 1}">`;
-                grid.appendChild(card);
+            allPhotos.forEach((src, i) => {
+                const cell = document.createElement('div');
+                cell.className = 'photo-cell';
+                const img = document.createElement('img');
+                img.src = src;
+                img.alt = `Photo ${i + 1}`;
+                cell.appendChild(img);
+                grid.appendChild(cell);
             });
         }
 
@@ -280,35 +233,16 @@
         function startListening() {
             if (listeningActive) return;
             listeningActive = true;
-            
-            socket.emit('start_listening_retake', {
-                expected_commands: ['YES', 'NO']
-            });
+            socket.emit('start_listening_retake', { expected_commands: ['YES', 'NO'] });
         }
 
-        socket.on('voice_detected_retake', (data) => {
-            const detected = data.detected_text || 'Not recognized';
-            document.getElementById('detectedText').textContent = `You said: "${detected}"`;
-            
-            if (data.is_valid) {
-                if (data.matched_command === 'YES') {
-                    handleRetake();
-                } else if (data.matched_command === 'NO') {
-                    handleContinue();
-                }
-            } else {
-                document.getElementById('statusMessage').textContent = 'Not recognized. Please try again.';
-                setTimeout(() => startListening(), 2000);
-            }
-        });
-
         function handleRetake() {
-            document.getElementById('statusMessage').textContent = 'Restarting photo session...';
+            document.getElementById('feedbackText').textContent = 'Restarting session...';
             socket.emit('user_retake_decision', { action: 'retake' });
         }
 
         function handleContinue() {
-            document.getElementById('statusMessage').textContent = 'Proceeding to template selection...';
+            document.getElementById('feedbackText').textContent = 'Moving to template selection...';
             socket.emit('user_retake_decision', { action: 'continue' });
         }
     </script>

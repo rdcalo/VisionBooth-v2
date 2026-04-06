@@ -6,294 +6,285 @@
     <title>Choose Template - VisionBooth</title>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background-color: #f1f1f1;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             color: #101b40;
         }
-
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 35px 90px;
             background-color: #f1f1f1;
+            position: relative;
+            width: 100%;
         }
-
-        .logo {
-            font-size: 1.2em;
-            font-weight: 700;
+        .logo { font-size: 1.2em; font-weight: 700; color: #101b40; line-height: 1.2; }
+        .logo span { display: block; }
+        .nav-menu {
+            background-color: #f1f1f1;
+            border: 2.5px solid #101b40;
+            border-radius: 50px;
+            padding: 6px;
+            display: flex;
+            gap: 5px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 3px 12px rgba(16,27,64,0.12);
+        }
+        .nav-btn {
+            padding: 10px 32px;
+            border: none;
+            border-radius: 50px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
             color: #101b40;
-            line-height: 1.2;
+            text-decoration: none;
         }
-
-        .logo span {
-            display: block;
-        }
-
+        .nav-btn.active { background-color: #101b40; color: white; }
+        .nav-btn:hover:not(.active) { background-color: #e6e6e6; }
+ 
         .main-content {
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            padding: 60px 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
+            padding: 10px 60px 50px;
+            gap: 32px;
         }
-
-        .page-title {
-            font-size: 2.5em;
-            font-weight: 800;
-            color: #101b40;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .subtitle {
-            font-size: 1.2em;
-            color: #666;
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
+        .page-title { font-size: 2.5em; font-weight: 800; color: #101b40; text-align: center; }
+ 
         .templates-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 40px;
             width: 100%;
-            margin-bottom: 60px;
+            max-width: 860px;
         }
-
-        .template-card {
-            background: white;
-            border: 3px solid #ccc;
-            border-radius: 12px;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        .template-card { display: flex; flex-direction: column; align-items: center; gap: 14px; cursor: pointer; }
+        .strip-wrap {
+            width: 100%; height: 420px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
         }
-
-        .template-card:hover {
-            border-color: #101b40;
-            box-shadow: 0 8px 25px rgba(16, 27, 64, 0.2);
-            transform: translateY(-8px);
+        .strip-wrap img { width: 100%; height: 100%; object-fit: contain; display: block; }
+        .template-card:hover .strip-wrap { transform: translateY(-6px); box-shadow: 0 10px 28px rgba(16,27,64,0.18); }
+        .template-card.selected .strip-wrap { outline: 4px solid #101b40; border-radius: 8px; transform: translateY(-6px); box-shadow: 0 10px 28px rgba(16,27,64,0.25); }
+        .template-name { font-size: 1.2em; font-weight: 700; color: #101b40; text-align: center; }
+        .template-cmd { font-size: 0.72em; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: #777; text-align: center; }
+        .template-cmd strong { color: #101b40; font-weight: 700; }
+ 
+        .bottom-status { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .mic-status { font-size: 0.8em; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #101b40; display: flex; align-items: center; gap: 8px; }
+        .mic-dot { width: 9px; height: 9px; border-radius: 50%; background: #e74c3c; animation: pulse 1s infinite; flex-shrink: 0; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.2} }
+        .feedback { font-size: 0.72em; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #888; min-height: 18px; text-align: center; }
+ 
+        /* Overlay */
+        .overlay-backdrop {
+            display: none; position: fixed; inset: 0;
+            background: rgba(241,241,241,0.6);
+            backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+            z-index: 100; align-items: center; justify-content: center;
         }
-
-        .template-card.selected {
-            border-color: #101b40;
-            border-width: 4px;
-            box-shadow: 0 8px 30px rgba(16, 27, 64, 0.3);
+        .overlay-backdrop.active { display: flex; }
+        .overlay-card {
+            background: white; border: 2.5px solid #101b40; border-radius: 16px;
+            padding: 32px 36px; width: 100%; max-width: 340px;
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
+            box-shadow: 0 20px 60px rgba(16,27,64,0.18);
+            animation: popIn 0.2s ease;
         }
-
-        .template-preview {
-            width: 100%;
-            height: 240px;
-            background: #f9f9f9;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        .template-preview img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .template-info {
-            padding: 20px;
-            text-align: center;
-        }
-
-        .template-name {
-            font-size: 1.3em;
-            font-weight: 700;
-            color: #101b40;
-            margin-bottom: 8px;
-        }
-
-        .template-desc {
-            font-size: 0.95em;
-            color: #666;
-        }
-
-        .selection-section {
-            background: #f0f4ff;
-            padding: 40px;
-            border-radius: 16px;
-            max-width: 700px;
-            text-align: center;
-        }
-
-        .selection-title {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: #101b40;
-            margin-bottom: 20px;
-        }
-
-        .instruction {
-            font-size: 1.1em;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .detected-text {
-            font-size: 1.1em;
-            font-weight: 700;
-            color: #101b40;
-            padding: 15px;
-            background: white;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            min-height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .status-message {
-            font-size: 1em;
-            color: #777;
-            margin-top: 20px;
-        }
-
+        @keyframes popIn { from{transform:scale(0.93);opacity:0} to{transform:scale(1);opacity:1} }
+        .overlay-title { font-size: 1.25em; font-weight: 800; color: #101b40; text-align: center; white-space: nowrap; }
+        .overlay-strip { width: 130px; height: 300px; display: flex; align-items: center; justify-content: center; }
+        .overlay-strip img { width: 100%; height: 100%; object-fit: contain; display: block; }
+        .overlay-instruction { font-size: 0.88em; font-weight: 500; color: #444; white-space: nowrap; display: flex; align-items: center; gap: 7px; }
+        .overlay-instruction strong { color: #101b40; font-weight: 700; }
+        .listening-bar { width: 100%; padding: 13px 20px; background: #f0f0f0; border-radius: 50px; font-size: 0.9em; font-weight: 600; color: #555; text-align: center; letter-spacing: 0.04em; }
+ 
         @media (max-width: 768px) {
-            .page-title {
-                font-size: 1.8em;
-            }
-
-            .templates-grid {
-                grid-template-columns: 1fr;
-                gap: 30px;
-            }
-
-            .template-preview {
-                height: 200px;
-            }
+            nav { padding: 20px 30px; }
+            .nav-menu { position: static; transform: none; margin-top: 10px; }
+            .templates-grid { gap: 20px; }
+            .strip-wrap { height: 280px; }
+            .page-title { font-size: 1.8em; }
+            .overlay-instruction { white-space: normal; flex-wrap: wrap; justify-content: center; }
         }
     </style>
 </head>
 <body>
     <nav>
-        <div class="logo">
-            <span>VISION</span>
-            <span>BOOTH</span>
+        <div class="logo"><span>VISION</span><span>BOOTH</span></div>
+        <div class="nav-menu">
+            <a href="/"      class="nav-btn">HOME</a>
+            <a href="/guide" class="nav-btn">GUIDE</a>
+            <a href="/index" class="nav-btn active">PHOTOBOOTH</a>
+            <a href="/about" class="nav-btn">ABOUT</a>
         </div>
     </nav>
-
+ 
     <div class="main-content">
-        <h1 class="page-title">Choose Your Design</h1>
-        <div class="subtitle">Pick one of our beautiful photo strip templates</div>
-
+        <h1 class="page-title">Choose Your Design!</h1>
+ 
         <div class="templates-grid">
-            <div class="template-card" id="template1" onclick="selectTemplate(1)">
-                <div class="template-preview">
-                    <img src="/static/templates/template_1.png" alt="Classic Blue">
-                </div>
-                <div class="template-info">
-                    <div class="template-name">Classic</div>
-                    <div class="template-desc">Professional Blue Design</div>
-                </div>
+            <div class="template-card" id="card1" onclick="handleCardClick(1)">
+                <div class="strip-wrap"><img src="/static/images/template_1.png" onerror="this.style.background='#ddd'" alt="Classic"></div>
+                <div class="template-name">Classic</div>
+                <div class="template-cmd">Say <strong>"CLASSIC"</strong></div>
             </div>
-
-            <div class="template-card" id="template2" onclick="selectTemplate(2)">
-                <div class="template-preview">
-                    <img src="/static/templates/template_2.png" alt="Fun Rainbow">
-                </div>
-                <div class="template-info">
-                    <div class="template-name">Fun</div>
-                    <div class="template-desc">Colorful Rainbow Design</div>
-                </div>
+            <div class="template-card" id="card2" onclick="handleCardClick(2)">
+                <div class="strip-wrap"><img src="/static/images/template_2.png" onerror="this.style.background='#ddd'" alt="Fun"></div>
+                <div class="template-name">Fun</div>
+                <div class="template-cmd">Say <strong>"FUN"</strong></div>
             </div>
-
-            <div class="template-card" id="template3" onclick="selectTemplate(3)">
-                <div class="template-preview">
-                    <img src="/static/templates/template_3.png" alt="Elegant Purple">
-                </div>
-                <div class="template-info">
-                    <div class="template-name">Elegant</div>
-                    <div class="template-desc">Sophisticated Purple Design</div>
-                </div>
+            <div class="template-card" id="card3" onclick="handleCardClick(3)">
+                <div class="strip-wrap"><img src="/static/images/template_3.png" onerror="this.style.background='#ddd'" alt="Elegant"></div>
+                <div class="template-name">Elegant</div>
+                <div class="template-cmd">Say <strong>"ELEGANT"</strong></div>
             </div>
         </div>
-
-        <div class="selection-section">
-            <div class="selection-title">Select a template</div>
-            <div class="instruction">Say "TEMPLATE 1", "TEMPLATE 2", or "TEMPLATE 3"</div>
-            
-            <div class="detected-text" id="detectedText">
-                Waiting for voice input...
+ 
+        <div class="bottom-status">
+            <div class="mic-status"><div class="mic-dot"></div><span id="micLabel">Microphone listening...</span></div>
+            <div class="feedback" id="feedbackText"></div>
+        </div>
+    </div>
+ 
+    <div class="overlay-backdrop" id="overlayBackdrop">
+        <div class="overlay-card">
+            <div class="overlay-title" id="overlayTitle">"Fun" selected</div>
+            <div class="overlay-strip"><img id="overlayImg" src="" alt="Selected template"></div>
+            <div class="overlay-instruction">
+                <div class="mic-dot"></div>
+                Say <strong>"YES"</strong> to confirm or <strong>"NO"</strong> to pick again
             </div>
-
-            <div class="status-message" id="statusMessage"></div>
+            <div class="listening-bar" id="listeningBar">Listening...</div>
         </div>
     </div>
 
     <script>
         const socket = io();
-        let selectedTemplate = null;
 
-        socket.on('connect', () => {
-            console.log('Connected to server');
-            startListening();
-        });
+        let pendingTemplate = null;
+        let phase           = 'SELECT';
+        let selectionLocked = false;
+
+        const NAMES = { 1: 'Classic', 2: 'Fun', 3: 'Elegant' };
+        const IMGS  = {
+            1: '/static/images/template_1.png',
+            2: '/static/images/template_2.png',
+            3: '/static/images/template_3.png',
+        };
+
+        socket.on('connect', () => startSelectListening());
 
         socket.on('voice_detected_template', (data) => {
+            if (selectionLocked) return;
             const detected = data.detected_text || 'Not recognized';
-            document.getElementById('detectedText').textContent = `You said: "${detected}"`;
-            
-            if (data.is_valid && data.matched_command) {
-                const templateNum = parseInt(data.matched_command.replace('TEMPLATE ', ''));
-                selectTemplate(templateNum);
-            } else {
-                document.getElementById('statusMessage').textContent = 'Not recognized. Please say TEMPLATE 1, 2, or 3.';
-                setTimeout(() => startListening(), 2000);
+
+            if (phase === 'SELECT') {
+                document.getElementById('micLabel').textContent = `You said: "${detected}"`;
+
+                if (data.is_valid && data.matched_command) {
+                    const map = { 'CLASSIC': 1, 'FUN': 2, 'ELEGANT': 3 };
+                    const num = map[data.matched_command];
+                    if (num) {
+                        showOverlay(num);
+                    } else {
+                        setFeedback('Say CLASSIC, FUN, or ELEGANT.');
+                        setTimeout(() => { resetFeedback(); startSelectListening(); }, 1800);
+                    }
+                } else {
+                    setFeedback('Not recognized. Please try again...');
+                    setTimeout(() => { resetFeedback(); startSelectListening(); }, 1800);
+                }
+
+            } else if (phase === 'CONFIRM') {
+                document.getElementById('listeningBar').textContent = `You said: "${detected}"`;
+
+                if (data.is_valid) {
+                    if (data.matched_command === 'YES') {
+                        confirmSelection();
+                    } else if (data.matched_command === 'NO') {
+                        hideOverlay();
+                    } else {
+                        document.getElementById('listeningBar').textContent = 'Say YES or NO...';
+                        setTimeout(startConfirmListening, 1500);
+                    }
+                } else {
+                    document.getElementById('listeningBar').textContent = 'Not recognized — say YES or NO.';
+                    setTimeout(startConfirmListening, 1500);
+                }
             }
         });
 
-        socket.on('template_selected', (data) => {
-            console.log('Template confirmed:', data.template);
-            document.getElementById('statusMessage').textContent = 'Proceeding to filter selection...';
-            setTimeout(() => {
-                window.location.href = '/filter_selection';
-            }, 1500);
+        socket.on('template_selected', () => {
+            if (selectionLocked) return;
+            selectionLocked = true;
+            setFeedback('Proceeding to filter selection...');
+            setTimeout(() => { window.location.href = '/filter_selection'; }, 1000);
         });
 
-        function selectTemplate(num) {
-            selectedTemplate = num;
-            
-            // Update UI
-            document.querySelectorAll('.template-card').forEach((card, idx) => {
-                card.classList.remove('selected');
-                if (idx + 1 === num) {
-                    card.classList.add('selected');
-                }
-            });
-
-            document.getElementById('statusMessage').textContent = `Template ${num} selected!`;
-            
-            // Notify server
-            socket.emit('select_template', { template: num });
+        function showOverlay(num) {
+            phase           = 'CONFIRM';
+            pendingTemplate = num;
+            highlightCard(num);
+            document.getElementById('overlayTitle').textContent = `"${NAMES[num]}" selected`;
+            document.getElementById('overlayImg').src           = IMGS[num];
+            document.getElementById('listeningBar').textContent = 'Listening...';
+            document.getElementById('overlayBackdrop').classList.add('active');
+            startConfirmListening();
         }
 
-        function startListening() {
-            socket.emit('start_listening_template', {
-                expected_commands: ['TEMPLATE 1', 'TEMPLATE 2', 'TEMPLATE 3']
-            });
+        function hideOverlay() {
+            phase           = 'SELECT';
+            pendingTemplate = null;
+            highlightCard(null);
+            document.getElementById('overlayBackdrop').classList.remove('active');
+            document.getElementById('micLabel').textContent = 'Microphone listening...';
+            resetFeedback();
+            startSelectListening();
+        }
+
+        function confirmSelection() {
+            if (selectionLocked) return;
+            socket.emit('select_template', { template: pendingTemplate });
+        }
+
+        function highlightCard(num) {
+            [1, 2, 3].forEach(n =>
+                document.getElementById(`card${n}`).classList.toggle('selected', n === num)
+            );
+        }
+
+        function setFeedback(msg)  { document.getElementById('feedbackText').textContent = msg; }
+        function resetFeedback()   { document.getElementById('feedbackText').textContent = ''; }
+
+        function handleCardClick(num) {
+            if (selectionLocked) return;
+            if (phase === 'CONFIRM' && pendingTemplate === num) confirmSelection();
+            else showOverlay(num);
+        }
+
+        function startSelectListening() {
+            if (selectionLocked) return;
+            socket.emit('start_listening_template', { expected_commands: ['CLASSIC', 'FUN', 'ELEGANT'] });
+        }
+
+        function startConfirmListening() {
+            if (selectionLocked) return;
+            socket.emit('start_listening_template', { expected_commands: ['YES', 'NO'] });
         }
     </script>
 </body>
