@@ -5,48 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guide - VisionBooth</title>
     <style>
-        /* Reset and global styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             background-color: #f1f1f1;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             color: #101b40;
-            overflow-x: hidden;
         }
-
-        /* Navigation */
         nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 35px 90px;
             background-color: #f1f1f1;
+            position: relative;
             width: 100%;
-            max-width: 1400px;
-            margin: 0 auto;
         }
-
-        .logo {
-            font-size: 1.2em;
-            font-weight: 700;
-            color: #101b40;
-            letter-spacing: 0.5px;
-            text-align: left;
-            line-height: 1.2;
-        }
-
-        .logo span {
-            display: block;
-        }
-
+        .logo { font-size: 1.2em; font-weight: 700; color: #101b40; line-height: 1.2; }
+        .logo span { display: block; }
         .nav-menu {
             background-color: #f1f1f1;
             border: 2.5px solid #101b40;
@@ -57,9 +35,8 @@
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            box-shadow: 0 3px 12px rgba(16, 27, 64, 0.12);
+            box-shadow: 0 3px 12px rgba(16,27,64,0.12);
         }
-
         .nav-btn {
             padding: 10px 32px;
             border: none;
@@ -72,17 +49,9 @@
             color: #101b40;
             text-decoration: none;
         }
+        .nav-btn.active { background-color: #101b40; color: white; }
+        .nav-btn:hover:not(.active) { background-color: #e6e6e6; }
 
-        .nav-btn.active {
-            background-color: #101b40;
-            color: white;
-        }
-
-        .nav-btn:hover:not(.active) {
-            background-color: #f1f1f1;
-        }
-
-        /* Main Content */
         .main-content {
             flex: 1;
             display: flex;
@@ -94,12 +63,10 @@
             margin: 0 auto;
             animation: fadeIn 1.2s ease-out forwards;
         }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
+            to   { opacity: 1; transform: translateY(0); }
         }
-
         .page-title {
             font-size: 2.5em;
             font-weight: 800;
@@ -107,37 +74,16 @@
             text-align: center;
             margin-bottom: 60px;
         }
-
-        .steps-container {
-            display: flex;
-            flex-direction: column;
-            gap: 40px;
-            width: 100%;
-        }
-
-        .step {
-            font-size: 1em;
-        }
-
-        .step-header {
-            font-size: 1.1em;
-            font-weight: 700;
-            color: #101b40;
-            margin-bottom: 8px;
-        }
-
-        .step-content ul {
-            list-style: none;
-            padding-left: 20px;
-        }
-
+        .steps-container { display: flex; flex-direction: column; gap: 40px; width: 100%; }
+        .step { font-size: 1em; }
+        .step-header { font-size: 1.1em; font-weight: 700; color: #101b40; margin-bottom: 8px; }
+        .step-content ul { list-style: none; padding-left: 20px; }
         .step-content li {
             position: relative;
             font-size: 1.05em;
             line-height: 1.6;
             color: #000;
         }
-
         .step-content li::before {
             content: "•";
             position: absolute;
@@ -145,12 +91,7 @@
             font-size: 1.3em;
             color: #101b40;
         }
-
-        .highlight {
-            font-weight: 700;
-        }
-
-        /* GOT IT Button */
+        .highlight { font-weight: 700; }
         .gotit-btn {
             margin-top: 60px;
             padding: 15px 55px;
@@ -162,154 +103,65 @@
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(16, 27, 64, 0.12);
             text-decoration: none;
             display: inline-block;
         }
-
         .gotit-btn:hover {
             background-color: #101b40;
             color: white;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(16, 27, 64, 0.25);
         }
-
-        .gotit-btn:active {
-            transform: translateY(0);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            nav {
-                padding: 30px 50px;
-            }
-
-            .main-content {
-                padding: 50px;
-            }
-
-            .page-title {
-                font-size: 2em;
-                margin-bottom: 40px;
-            }
-
-            .step-header {
-                font-size: 1em;
-            }
-
-            .gotit-btn {
-                font-size: 1em;
-                padding: 12px 40px;
-            }
-        }
-
         @media (max-width: 768px) {
-            .nav-menu {
-                position: static;
-                transform: none;
-                justify-content: center;
-                margin-top: 10px;
-            }
-
-            .main-content {
-                padding: 40px 30px;
-                text-align: center;
-            }
-
-            .steps-container {
-                text-align: left;
-            }
-
-            .page-title {
-                font-size: 1.8em;
-            }
+            nav { padding: 20px 30px; }
+            .nav-menu { position: static; transform: none; margin-top: 10px; }
+            .main-content { padding: 40px 30px; }
+            .page-title { font-size: 1.8em; }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation -->
     <nav>
-        <div class="logo">
-            <span>VISION</span>
-            <span>BOOTH</span>
-        </div>
+        <div class="logo"><span>VISION</span><span>BOOTH</span></div>
         <div class="nav-menu">
-            <a href="/" class="nav-btn">HOME</a>
+            <a href="/"      class="nav-btn">HOME</a>
             <a href="/guide" class="nav-btn active">GUIDE</a>
             <a href="/index" class="nav-btn">PHOTOBOOTH</a>
             <a href="/about" class="nav-btn">ABOUT</a>
         </div>
     </nav>
 
-    <!-- Main Content -->
     <div class="main-content">
         <h1 class="page-title">How does it work?</h1>
-
         <div class="steps-container">
             <div class="step">
                 <h2 class="step-header">Step 1: Set Your Timer!</h2>
-                <div class="step-content">
-                    <ul>
-                        <li>Hold up 1–5 fingers to choose countdown length</li>
-                    </ul>
-                </div>
+                <div class="step-content"><ul><li>Hold up 1–5 fingers to choose countdown length</li></ul></div>
             </div>
-
             <div class="step">
                 <h2 class="step-header">Step 2: Start the Countdown!</h2>
-                <div class="step-content">
-                    <ul>
-                        <li>Say <span class="highlight">"START"</span> to begin the countdown <span class="highlight">(Say "CLOSED FIST" gesture to reset)</span></li>
-                    </ul>
-                </div>
+                <div class="step-content"><ul><li>Say <span class="highlight">"START"</span> to begin the countdown <span class="highlight">(Closed fist gesture to reset)</span></li></ul></div>
             </div>
-
             <div class="step">
                 <h2 class="step-header">Step 3: Strike Your Poses!</h2>
-                <div class="step-content">
-                    <ul>
-                        <li>Get ready for 4 photos — the countdown repeats automatically</li>
-                    </ul>
-                </div>
+                <div class="step-content"><ul><li>Get ready for 4 photos — the countdown repeats automatically</li></ul></div>
             </div>
-
             <div class="step">
                 <h2 class="step-header">Step 4: Review Your Photos!</h2>
-                <div class="step-content">
-                    <ul>
-                        <li>Say <span class="highlight">"YES"</span> to retake or <span class="highlight">"NO"</span> to continue</li>
-                    </ul>
-                </div>
+                <div class="step-content"><ul><li>Say <span class="highlight">"YES"</span> to retake or <span class="highlight">"NO"</span> to continue</li></ul></div>
             </div>
-
             <div class="step">
                 <h2 class="step-header">Step 5: Choose Your Design!</h2>
-                <div class="step-content">
-                    <ul>
-                        <li>Say <span class="highlight">"TEMPLATE 1", "TEMPLATE 2", or "TEMPLATE 3"</span> to pick your photo strip design</li>
-                    </ul>
-                </div>
+                <div class="step-content"><ul><li>Say <span class="highlight">"CLASSIC"</span>, <span class="highlight">"FUN"</span>, or <span class="highlight">"ELEGANT"</span> to pick your photo strip design</li></ul></div>
             </div>
-
             <div class="step">
                 <h2 class="step-header">Step 6: Apply a Filter!</h2>
-                <div class="step-content">
-                    <ul>
-                        <li>Say <span class="highlight">"ONE"</span> for Normal colors or <span class="highlight">"TWO"</span> for Black & White</li>
-                    </ul>
-                </div>
+                <div class="step-content"><ul><li>Say <span class="highlight">"NORMAL"</span> for colour or <span class="highlight">"BLACK AND WHITE"</span></li></ul></div>
             </div>
-
             <div class="step">
                 <h2 class="step-header">Step 7: Download Your Strip!</h2>
-                <div class="step-content">
-                    <ul>
-                        <li>Click download to save your photo strip to your device</li>
-                    </ul>
-                </div>
+                <div class="step-content"><ul><li>Click download to save your photo strip to your device</li></ul></div>
             </div>
         </div>
-
         <a href="/privacy" class="gotit-btn">GOT IT!</a>
     </div>
 </body>

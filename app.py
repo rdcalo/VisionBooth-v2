@@ -157,7 +157,6 @@ def handle_request_session_info():
         'selected_template': current_state.get('selected_template', 1),
         'selected_filter':   current_state.get('selected_filter', None),
     })
- 
 
 @socketio.on('new_session_request')
 def handle_new_session():
@@ -291,11 +290,12 @@ def _process_camera_state_machine(gesture_name):
     }
     detected_count = finger_count_map.get(gesture_name)
     fist_detected  = (gesture_name == "Fist")
-
+    thumb_up       = (gesture_name == "Thumbs Up")
+ 
     if screen == 'TIMER_DETECT':
         if detected_count and 1 <= detected_count <= 5:
             current_state.update({'screen': 'TIMER_DETECTING', 'last_count': detected_count, 'count_streak': 1})
-
+ 
     elif screen == 'TIMER_DETECTING':
         if detected_count and 1 <= detected_count <= 5:
             if detected_count == current_state['last_count']:
@@ -310,18 +310,36 @@ def _process_camera_state_machine(gesture_name):
                 current_state.update({'count_streak': 1, 'last_count': detected_count})
         elif gesture_name is None:
             _reset_camera_state()
-
+ 
     elif screen == 'TIMER_SET':
         current_state['screen'] = 'TIMER_READY'
-
+ 
     elif screen == 'TIMER_READY':
-        if fist_detected:
+        if thumb_up:
+            # Thumbs up — start countdown (fallback if voice START fails)
+            current_state['fist_streak'] = 0
+            current_state['thumb_up_streak'] += 1
+            print(f"👍 Thumbs up streak: {current_state['thumb_up_streak']}/{CONSECUTIVE_REQUIRED}")
+            if current_state['thumb_up_streak'] >= CONSECUTIVE_REQUIRED:
+                current_state.update({
+                    'screen':          'COUNTDOWN',
+                    'countdown_end':   time.time() + current_state['timer_value'],
+                    'thumb_up_streak': 0,
+                    'fist_streak':     0,
+                })
+                print(f"▶ Countdown started via thumbs up: {current_state['timer_value']}s")
+                speech_handler.speak("Starting countdown")
+        elif fist_detected:
+            # Fist — reset timer selection
+            current_state['thumb_up_streak'] = 0
             current_state['fist_streak'] += 1
             if current_state['fist_streak'] >= CONSECUTIVE_REQUIRED:
                 _reset_camera_state()
         else:
+            # Any other gesture resets both streaks
+            current_state['thumb_up_streak'] = 0
             current_state['fist_streak'] = 0
-
+ 
     elif screen == 'COUNTDOWN':
         if _get_countdown() == 0:
             current_state.update({'screen': 'CAPTURE', 'countdown_end': None})
